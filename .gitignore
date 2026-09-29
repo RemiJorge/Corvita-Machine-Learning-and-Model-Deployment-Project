@@ -1,0 +1,34 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Data (manifest is committed when present)
+data/raw/
+data/interim/
+data/processed/
+
+# Logs and local runtime
+logs/
+
+# Terraform
+infra/.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Editor and OS
+.DS_Store
+*.swp
+
+AGENTS.md
+CLAUDE.md
+
+# specs
+specs/*.md
+specs/*.pdf

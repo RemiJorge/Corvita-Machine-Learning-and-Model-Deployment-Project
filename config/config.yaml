@@ -1,0 +1,63 @@
+seed: 42
+
+paths:
+  raw_dir: data/raw
+  interim_dir: data/interim
+  processed_dir: data/processed
+  manifest: data/manifest.json
+  splits_dir: splits
+  models_dir: models
+  reports_dir: reports
+  request_log: logs/requests.jsonl
+
+source:
+  dataset_version: "1.0.0"
+  base_url: "https://physionet.org/files/challenge-2012/1.0.0/"
+  files:
+    - set-a.tar.gz
+    - Outcomes-a.txt
+
+cutoff_minutes: 1440
+
+vitals:
+  - HR
+  - RespRate
+  - Temp
+
+physiological_bounds:
+  HR: [20, 300]
+  RespRate: [1, 80]
+  Temp: [25.0, 45.0]
+
+admission_bounds:
+  Age: [15, 120]
+  ICUType: [1, 4]
+
+split:
+  train: 0.70
+  val: 0.15
+  test: 0.15
+
+models:
+  logreg:
+    C: [0.01, 0.1, 1.0, 10.0]
+  hgb:
+    learning_rate: [0.05, 0.1]
+    max_depth: [2, 3]
+    min_samples_leaf: [20, 50]
+    max_iter: [100, 300]
+
+threshold:
+  target_sensitivity: 0.80
+
+evaluation:
+  bootstrap_resamples: 1000
+  calibration_bins: 10
+
+serving:
+  model_version: "1.0.0"
+
+monitoring:
+  window_size: 200
+  max_partial_rate_increase: 0.15
+  max_insufficient_rate: 0.05

@@ -1,0 +1,16 @@
+.venv/
+.git/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.pyc
+data/
+logs/
+specs/
+AGENTS.md
+CLAUDE.md
+.gitignore
+.dockerignore
+tests/
+infra/
+.github/
