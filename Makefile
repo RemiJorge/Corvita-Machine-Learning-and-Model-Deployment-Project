@@ -8,9 +8,8 @@ help: ## List targets with a one-line description
 setup: ## Install dependencies from uv.lock (uv sync --frozen)
 	uv sync --frozen
 
-data: ## Run ingest, parse, quality, and tables
-	@echo "not implemented yet: F1"
-	@exit 1
+data: ## Run ingest only (parse, quality, tables in F2/F3)
+	uv run python -m icu.ingest
 
 features: ## Build feature table (python -m icu.features)
 	@echo "not implemented yet: F4"
