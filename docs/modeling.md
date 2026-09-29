@@ -72,3 +72,15 @@ The winning hyperparameters are not refit on train plus validation. Preparation 
 On validation probabilities for each selected model, the decision threshold is the highest value whose sensitivity is at least `threshold.target_sensitivity` (default 0.80). Validation specificity, precision, and alerts per 100 patients are stored in `reports/selection.json`. The Youden threshold is recorded for comparison only (`docs/decisions/006-threshold-rule.md`).
 
 `make train` runs `python -m icu.train` and writes `reports/tuning.csv` and `reports/selection.json`.
+
+## Test evaluation (F7)
+
+`icu.evaluate` scores the **test split once**. It reads frozen hyperparameters and validation thresholds from `reports/selection.json`, refits both models on **training rows only**, and writes:
+
+- `reports/metrics.json` (point metrics, naive baselines, 1000 bootstrap intervals, paired bootstrap for HGB minus logistic regression)
+- `reports/missing_vitals.json` (natural missing-vital subgroups and vital ablation on test records)
+- `reports/figures/roc.png`, `pr.png`, `calibration.png`
+
+The served model is chosen from **validation** metrics only (`docs/decisions/007-served-model-choice.md`). Test numbers are reported but do not drive that choice.
+
+`make evaluate` runs `python -m icu.evaluate`. Model serialization under `models/` is F8.

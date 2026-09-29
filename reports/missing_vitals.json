@@ -1,0 +1,456 @@
+{
+  "subgroups": {
+    "all": {
+      "description": "All test records",
+      "n": 600,
+      "n_deaths": 83,
+      "models": {
+        "logistic_regression": {
+          "point_metrics": {
+            "pr_auc": 0.3028787118514853,
+            "auroc": 0.7412085479247745,
+            "brier": 0.1098438419797776,
+            "sensitivity": 0.7831325301204819,
+            "specificity": 0.5783365570599613,
+            "precision": 0.22968197879858657,
+            "alerts_per_100": 47.16666666666667
+          },
+          "baselines": {
+            "pr_auc": 0.13833333333333334,
+            "auroc": 0.5,
+            "precision": 0.13833333333333334,
+            "brier": 0.11919727891156462
+          },
+          "confusion_matrix": {
+            "tp": 65,
+            "fp": 218,
+            "tn": 299,
+            "fn": 18
+          }
+        },
+        "hist_gradient_boosting": {
+          "point_metrics": {
+            "pr_auc": 0.3504382059082329,
+            "auroc": 0.7756286266924566,
+            "brier": 0.10530303047749777,
+            "sensitivity": 0.8554216867469879,
+            "specificity": 0.5783365570599613,
+            "precision": 0.24567474048442905,
+            "alerts_per_100": 48.16666666666667
+          },
+          "baselines": {
+            "pr_auc": 0.13833333333333334,
+            "auroc": 0.5,
+            "precision": 0.13833333333333334,
+            "brier": 0.11919727891156462
+          },
+          "confusion_matrix": {
+            "tp": 71,
+            "fp": 218,
+            "tn": 299,
+            "fn": 12
+          }
+        }
+      }
+    },
+    "any_missing_vital": {
+      "description": "At least one vital missing in the 24 h window",
+      "n": 421,
+      "n_deaths": 70,
+      "models": {
+        "logistic_regression": {
+          "point_metrics": {
+            "pr_auc": 0.305394320611398,
+            "auroc": 0.6998778998778998,
+            "brier": 0.13019518366507432,
+            "sensitivity": 0.8142857142857143,
+            "specificity": 0.4672364672364672,
+            "precision": 0.2336065573770492,
+            "alerts_per_100": 57.95724465558195
+          },
+          "baselines": {
+            "pr_auc": 0.166270783847981,
+            "auroc": 0.5,
+            "precision": 0.166270783847981,
+            "brier": 0.13939206456929562
+          },
+          "confusion_matrix": {
+            "tp": 57,
+            "fp": 187,
+            "tn": 164,
+            "fn": 13
+          }
+        },
+        "hist_gradient_boosting": {
+          "point_metrics": {
+            "pr_auc": 0.3496679647869454,
+            "auroc": 0.7367114367114367,
+            "brier": 0.12532770114343156,
+            "sensitivity": 0.8857142857142857,
+            "specificity": 0.47863247863247865,
+            "precision": 0.2530612244897959,
+            "alerts_per_100": 58.19477434679335
+          },
+          "baselines": {
+            "pr_auc": 0.166270783847981,
+            "auroc": 0.5,
+            "precision": 0.166270783847981,
+            "brier": 0.13939206456929562
+          },
+          "confusion_matrix": {
+            "tp": 62,
+            "fp": 183,
+            "tn": 168,
+            "fn": 8
+          }
+        }
+      }
+    },
+    "missing_hr": {
+      "description": "No HR measurements in the window",
+      "n": 11,
+      "n_deaths": 0,
+      "models": {
+        "logistic_regression": "too few events",
+        "hist_gradient_boosting": "too few events"
+      }
+    },
+    "missing_resp_rate": {
+      "description": "No RespRate measurements in the window",
+      "n": 421,
+      "n_deaths": 70,
+      "models": {
+        "logistic_regression": {
+          "point_metrics": {
+            "pr_auc": 0.305394320611398,
+            "auroc": 0.6998778998778998,
+            "brier": 0.13019518366507432,
+            "sensitivity": 0.8142857142857143,
+            "specificity": 0.4672364672364672,
+            "precision": 0.2336065573770492,
+            "alerts_per_100": 57.95724465558195
+          },
+          "baselines": {
+            "pr_auc": 0.166270783847981,
+            "auroc": 0.5,
+            "precision": 0.166270783847981,
+            "brier": 0.13939206456929562
+          },
+          "confusion_matrix": {
+            "tp": 57,
+            "fp": 187,
+            "tn": 164,
+            "fn": 13
+          }
+        },
+        "hist_gradient_boosting": {
+          "point_metrics": {
+            "pr_auc": 0.3496679647869454,
+            "auroc": 0.7367114367114367,
+            "brier": 0.12532770114343156,
+            "sensitivity": 0.8857142857142857,
+            "specificity": 0.47863247863247865,
+            "precision": 0.2530612244897959,
+            "alerts_per_100": 58.19477434679335
+          },
+          "baselines": {
+            "pr_auc": 0.166270783847981,
+            "auroc": 0.5,
+            "precision": 0.166270783847981,
+            "brier": 0.13939206456929562
+          },
+          "confusion_matrix": {
+            "tp": 62,
+            "fp": 183,
+            "tn": 168,
+            "fn": 8
+          }
+        }
+      }
+    },
+    "missing_temp": {
+      "description": "No Temp measurements in the window",
+      "n": 11,
+      "n_deaths": 0,
+      "models": {
+        "logistic_regression": "too few events",
+        "hist_gradient_boosting": "too few events"
+      }
+    },
+    "missing_all_three": {
+      "description": "No HR, RespRate, or Temp measurements",
+      "n": 11,
+      "n_deaths": 0,
+      "models": {
+        "logistic_regression": "too few events",
+        "hist_gradient_boosting": "too few events"
+      }
+    }
+  },
+  "ablation": {
+    "HR": {
+      "logistic_regression": {
+        "metrics": {
+          "point_metrics": {
+            "pr_auc": 0.27530219772829184,
+            "auroc": 0.7254550115355036,
+            "brier": 0.1140743906065858,
+            "sensitivity": 0.5180722891566265,
+            "specificity": 0.8143133462282398,
+            "precision": 0.30935251798561153,
+            "alerts_per_100": 23.166666666666664
+          },
+          "baselines": {
+            "pr_auc": 0.13833333333333334,
+            "auroc": 0.5,
+            "precision": 0.13833333333333334,
+            "brier": 0.11919727891156462
+          },
+          "confusion_matrix": {
+            "tp": 43,
+            "fp": 96,
+            "tn": 421,
+            "fn": 40
+          }
+        },
+        "delta_vs_full": {
+          "pr_auc": -0.027576514123193452,
+          "auroc": -0.015753536389270906,
+          "brier": 0.004230548626808189,
+          "sensitivity": -0.2650602409638554,
+          "specificity": 0.23597678916827847
+        }
+      },
+      "hist_gradient_boosting": {
+        "metrics": {
+          "point_metrics": {
+            "pr_auc": 0.34428761992287477,
+            "auroc": 0.7711309454452239,
+            "brier": 0.10746691905522873,
+            "sensitivity": 0.7228915662650602,
+            "specificity": 0.7137330754352031,
+            "precision": 0.28846153846153844,
+            "alerts_per_100": 34.66666666666667
+          },
+          "baselines": {
+            "pr_auc": 0.13833333333333334,
+            "auroc": 0.5,
+            "precision": 0.13833333333333334,
+            "brier": 0.11919727891156462
+          },
+          "confusion_matrix": {
+            "tp": 60,
+            "fp": 148,
+            "tn": 369,
+            "fn": 23
+          }
+        },
+        "delta_vs_full": {
+          "pr_auc": -0.006150585985358115,
+          "auroc": -0.00449768124723271,
+          "brier": 0.002163888577730963,
+          "sensitivity": -0.1325301204819277,
+          "specificity": 0.1353965183752418
+        }
+      }
+    },
+    "RespRate": {
+      "logistic_regression": {
+        "metrics": {
+          "point_metrics": {
+            "pr_auc": 0.2865273026159597,
+            "auroc": 0.6878655822516372,
+            "brier": 0.1125878408313973,
+            "sensitivity": 0.8313253012048193,
+            "specificity": 0.40425531914893614,
+            "precision": 0.1830238726790451,
+            "alerts_per_100": 62.83333333333333
+          },
+          "baselines": {
+            "pr_auc": 0.13833333333333334,
+            "auroc": 0.5,
+            "precision": 0.13833333333333334,
+            "brier": 0.11919727891156462
+          },
+          "confusion_matrix": {
+            "tp": 69,
+            "fp": 308,
+            "tn": 209,
+            "fn": 14
+          }
+        },
+        "delta_vs_full": {
+          "pr_auc": -0.016351409235525582,
+          "auroc": -0.053342965673137344,
+          "brier": 0.002743998851619703,
+          "sensitivity": 0.048192771084337394,
+          "specificity": -0.1740812379110252
+        }
+      },
+      "hist_gradient_boosting": {
+        "metrics": {
+          "point_metrics": {
+            "pr_auc": 0.31127533349048997,
+            "auroc": 0.7124280487520682,
+            "brier": 0.11128209528858335,
+            "sensitivity": 0.891566265060241,
+            "specificity": 0.41392649903288203,
+            "precision": 0.1962864721485411,
+            "alerts_per_100": 62.83333333333333
+          },
+          "baselines": {
+            "pr_auc": 0.13833333333333334,
+            "auroc": 0.5,
+            "precision": 0.13833333333333334,
+            "brier": 0.11919727891156462
+          },
+          "confusion_matrix": {
+            "tp": 74,
+            "fp": 303,
+            "tn": 214,
+            "fn": 9
+          }
+        },
+        "delta_vs_full": {
+          "pr_auc": -0.03916287241774291,
+          "auroc": -0.06320057794038836,
+          "brier": 0.00597906481108558,
+          "sensitivity": 0.03614457831325302,
+          "specificity": -0.1644100580270793
+        }
+      }
+    },
+    "Temp": {
+      "logistic_regression": {
+        "metrics": {
+          "point_metrics": {
+            "pr_auc": 0.2835215739437781,
+            "auroc": 0.7341008133112722,
+            "brier": 0.11130462088962749,
+            "sensitivity": 0.8795180722891566,
+            "specificity": 0.36750483558994196,
+            "precision": 0.1825,
+            "alerts_per_100": 66.66666666666666
+          },
+          "baselines": {
+            "pr_auc": 0.13833333333333334,
+            "auroc": 0.5,
+            "precision": 0.13833333333333334,
+            "brier": 0.11919727891156462
+          },
+          "confusion_matrix": {
+            "tp": 73,
+            "fp": 327,
+            "tn": 190,
+            "fn": 10
+          }
+        },
+        "delta_vs_full": {
+          "pr_auc": -0.01935713790770721,
+          "auroc": -0.007107734613502337,
+          "brier": 0.0014607789098498858,
+          "sensitivity": 0.09638554216867468,
+          "specificity": -0.21083172147001938
+        }
+      },
+      "hist_gradient_boosting": {
+        "metrics": {
+          "point_metrics": {
+            "pr_auc": 0.332281799635539,
+            "auroc": 0.7738808230989722,
+            "brier": 0.10694269985066569,
+            "sensitivity": 0.8072289156626506,
+            "specificity": 0.5880077369439072,
+            "precision": 0.2392857142857143,
+            "alerts_per_100": 46.666666666666664
+          },
+          "baselines": {
+            "pr_auc": 0.13833333333333334,
+            "auroc": 0.5,
+            "precision": 0.13833333333333334,
+            "brier": 0.11919727891156462
+          },
+          "confusion_matrix": {
+            "tp": 67,
+            "fp": 213,
+            "tn": 304,
+            "fn": 16
+          }
+        },
+        "delta_vs_full": {
+          "pr_auc": -0.01815640627269388,
+          "auroc": -0.001747803593484365,
+          "brier": 0.0016396693731679235,
+          "sensitivity": -0.04819277108433728,
+          "specificity": 0.009671179883945835
+        }
+      }
+    },
+    "all_three": {
+      "logistic_regression": {
+        "metrics": {
+          "point_metrics": {
+            "pr_auc": 0.2503339933888133,
+            "auroc": 0.7067069049893966,
+            "brier": 0.11394908824912718,
+            "sensitivity": 0.7951807228915663,
+            "specificity": 0.5319148936170213,
+            "precision": 0.21428571428571427,
+            "alerts_per_100": 51.33333333333333
+          },
+          "baselines": {
+            "pr_auc": 0.13833333333333334,
+            "auroc": 0.5,
+            "precision": 0.13833333333333334,
+            "brier": 0.11919727891156462
+          },
+          "confusion_matrix": {
+            "tp": 66,
+            "fp": 242,
+            "tn": 275,
+            "fn": 17
+          }
+        },
+        "delta_vs_full": {
+          "pr_auc": -0.052544718462672,
+          "auroc": -0.03450164293537794,
+          "brier": 0.004105246269349577,
+          "sensitivity": 0.012048192771084376,
+          "specificity": -0.046421663442940075
+        }
+      },
+      "hist_gradient_boosting": {
+        "metrics": {
+          "point_metrics": {
+            "pr_auc": 0.24773572709190217,
+            "auroc": 0.7036191186409079,
+            "brier": 0.1125401532734228,
+            "sensitivity": 0.7710843373493976,
+            "specificity": 0.5512572533849129,
+            "precision": 0.21621621621621623,
+            "alerts_per_100": 49.333333333333336
+          },
+          "baselines": {
+            "pr_auc": 0.13833333333333334,
+            "auroc": 0.5,
+            "precision": 0.13833333333333334,
+            "brier": 0.11919727891156462
+          },
+          "confusion_matrix": {
+            "tp": 64,
+            "fp": 232,
+            "tn": 285,
+            "fn": 19
+          }
+        },
+        "delta_vs_full": {
+          "pr_auc": -0.10270247881633071,
+          "auroc": -0.07200950805154871,
+          "brier": 0.007237122795925033,
+          "sensitivity": -0.0843373493975903,
+          "specificity": -0.027079303675048405
+        }
+      }
+    }
+  }
+}

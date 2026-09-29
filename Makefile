@@ -24,8 +24,7 @@ train: ## Tune models on validation and choose threshold
 	uv run python -m icu.train
 
 evaluate: ## Score test set and write reports
-	@echo "not implemented yet: F7"
-	@exit 1
+	uv run python -m icu.evaluate
 
 package: ## Write models/<version>/ pipeline and metadata
 	@echo "not implemented yet: F8"

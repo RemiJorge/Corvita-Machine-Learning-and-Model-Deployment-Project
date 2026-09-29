@@ -5,6 +5,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-30
+
+### Added
+
+- F7: `icu.evaluate` with one-time test scoring, bootstrap CIs, paired bootstrap, calibration figures, and missing-vitals subgroup plus ablation analysis.
+- F7: `reports/metrics.json`, `reports/missing_vitals.json`, and `reports/figures/{roc,pr,calibration}.png`; `make evaluate` runs `python -m icu.evaluate`.
+- F7: `tests/test_evaluate.py` (bootstrap determinism, served-model rule, test split usage).
+- F7: ADR `docs/decisions/007-served-model-choice.md` and initial `docs/model_card.md`; test evaluation section in `docs/modeling.md`.
+
 ## [0.7.0] - 2026-09-30
 
 ### Added
