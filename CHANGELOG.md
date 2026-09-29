@@ -5,6 +5,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-29
+
+### Added
+
+- F2: `icu.parse` reads set A record files into `data/interim/measurements.parquet` with integrity checks against `Outcomes-a.txt`.
+- F2: `icu.quality` applies `-1` and bounds cleaning, deduplicates exact rows, writes `reports/data_quality.json`.
+- F2: Synthetic PhysioNet fixtures under `tests/fixtures/` and tests in `tests/test_parse.py`, `tests/test_quality.py`.
+- F2: ADRs `docs/decisions/002-physiological-bounds.md` and `003-handling-minus-one.md`.
+- F2: `make data` runs ingest, parse, and quality; `make test-data` runs `pytest -m data`.
+- F2: Extended `docs/data.md` (parsing, cleaning, quality report, spot-check command).
+
 ## [0.2.0] - 2026-09-29
 
 ### Added

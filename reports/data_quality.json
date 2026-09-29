@@ -1,0 +1,88 @@
+{
+  "n_records": 4000,
+  "n_deaths": 554,
+  "death_rate": 0.1385,
+  "descriptors": {
+    "Age": {
+      "missing": 0,
+      "out_of_bounds": 0,
+      "percentiles": {
+        "p0.1": 17.0,
+        "p1": 20.0,
+        "p50": 67.0,
+        "p99": 90.0,
+        "p99.9": 90.0
+      }
+    },
+    "Gender": {
+      "missing": 3,
+      "counts": {
+        "0": 1751,
+        "1": 2246
+      }
+    },
+    "ICUType": {
+      "missing": 0,
+      "counts": {
+        "1": 577,
+        "2": 874,
+        "3": 1481,
+        "4": 1068
+      }
+    }
+  },
+  "vitals": {
+    "HR": {
+      "n_measurements_raw": 228538,
+      "n_minus_one": 0,
+      "n_out_of_bounds": 16,
+      "n_exact_duplicates": 0,
+      "n_after_cutoff": 0,
+      "n_measurements_used": 0,
+      "records_without_any_value_in_24h": 0,
+      "percentiles": {
+        "p0.1": 40.0,
+        "p1": 51.0,
+        "p50": 86.0,
+        "p99": 137.0,
+        "p99.9": 162.0
+      }
+    },
+    "RespRate": {
+      "n_measurements_raw": 55051,
+      "n_minus_one": 0,
+      "n_out_of_bounds": 62,
+      "n_exact_duplicates": 0,
+      "n_after_cutoff": 0,
+      "n_measurements_used": 0,
+      "records_without_any_value_in_24h": 0,
+      "percentiles": {
+        "p0.1": 0.0,
+        "p1": 9.0,
+        "p50": 19.0,
+        "p99": 36.0,
+        "p99.9": 47.0
+      }
+    },
+    "Temp": {
+      "n_measurements_raw": 86405,
+      "n_minus_one": 0,
+      "n_out_of_bounds": 130,
+      "n_exact_duplicates": 0,
+      "n_after_cutoff": 0,
+      "n_measurements_used": 0,
+      "records_without_any_value_in_24h": 0,
+      "percentiles": {
+        "p0.1": 1.9,
+        "p1": 34.7,
+        "p50": 37.1,
+        "p99": 39.1,
+        "p99.9": 40.1
+      }
+    }
+  },
+  "records_with_all_vitals_missing_in_24h": 0,
+  "resp_rate_missing_vs_mechvent": {
+    "note": "optional analysis, see section 9"
+  }
+}

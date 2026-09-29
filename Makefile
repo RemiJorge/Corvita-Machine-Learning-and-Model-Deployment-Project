@@ -8,8 +8,10 @@ help: ## List targets with a one-line description
 setup: ## Install dependencies from uv.lock (uv sync --frozen)
 	uv sync --frozen
 
-data: ## Run ingest only (parse, quality, tables in F2/F3)
+data: ## Run ingest, parse, and quality (tables in F3)
 	uv run python -m icu.ingest
+	uv run python -m icu.parse
+	uv run python -m icu.quality
 
 features: ## Build feature table (python -m icu.features)
 	@echo "not implemented yet: F4"
@@ -43,8 +45,7 @@ test: ## Run pytest excluding tests marked data
 	uv run pytest -m "not data"
 
 test-data: ## Run pytest tests that need the real dataset
-	@echo "not implemented yet: F1"
-	@exit 1
+	uv run pytest -m data
 
 check: ## Lint then run fast tests
 	$(MAKE) lint

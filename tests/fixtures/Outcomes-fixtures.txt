@@ -1,0 +1,5 @@
+RecordID,SAPS-I,SOFA,Length_of_stay,Survival,In-hospital_death
+999901,10,5,10,1,0
+999902,20,8,5,0,1
+999903,15,6,8,1,0
+999904,12,4,12,1,0
