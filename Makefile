@@ -15,8 +15,7 @@ data: ## Run ingest, parse, quality, and tables
 	uv run python -m icu.tables
 
 features: ## Build feature table (python -m icu.features)
-	@echo "not implemented yet: F4"
-	@exit 1
+	uv run python -m icu.features
 
 split: ## Write stratified train, val, and test ID files
 	@echo "not implemented yet: F5"

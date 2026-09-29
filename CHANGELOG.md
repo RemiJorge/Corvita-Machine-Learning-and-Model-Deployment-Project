@@ -5,6 +5,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-29
+
+### Added
+
+- F4: `icu.features` with `compute_features`, `FEATURE_COLUMNS`, and `data/processed/features.parquet`.
+- F4: `tests/test_features.py` (fixtures, missing vital, tie-break, column order, forbidden columns).
+- F4: ADR `docs/decisions/004-tie-breaking-last-vital.md` and `docs/modeling.md` (feature design notes).
+- F4: `make features` runs `python -m icu.features`.
+
 ## [0.4.0] - 2026-09-29
 
 ### Added
