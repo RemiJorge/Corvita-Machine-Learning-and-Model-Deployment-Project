@@ -31,4 +31,5 @@ CLAUDE.md
 
 # specs
 specs/*.md
+specs/*/*.md
 specs/*.pdf

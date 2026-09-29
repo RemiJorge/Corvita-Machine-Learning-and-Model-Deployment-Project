@@ -5,6 +5,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-29
+
+### Added
+
+- F1: `icu.ingest` downloads or verifies PhysioNet set A, optional extraction, and `data/manifest.json`.
+- F1: `tests/test_ingest.py` (hashing, checksum verification, manifest writing; no network).
+- F1: `docs/data.md` (source, license, manual raw files, manifest fields).
+- F1: `make data` runs ingest only.
+
 ## [0.1.0] - 2026-09-29
 
 ### Added

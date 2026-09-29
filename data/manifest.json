@@ -1,0 +1,27 @@
+{
+  "dataset": "PhysioNet Challenge 2012",
+  "dataset_version": "1.0.0",
+  "license": "Open Data Commons Attribution License v1.0",
+  "downloaded_at": "2026-09-29T19:19:06Z",
+  "published_checksums": null,
+  "files": [
+    {
+      "name": "set-a.tar.gz",
+      "url": "https://physionet.org/files/challenge-2012/1.0.0/set-a.tar.gz",
+      "bytes": 6632372,
+      "sha256": "8cb250f179cd0952b4b9ebcf8954b63d70383131670fac1cfee13deaa13ca920",
+      "published_sha256_match": null
+    },
+    {
+      "name": "Outcomes-a.txt",
+      "url": "https://physionet.org/files/challenge-2012/1.0.0/Outcomes-a.txt",
+      "bytes": 79219,
+      "sha256": "2613ea60ccda29f87571a7d6b09ad130858a8ccd66325bd073365925026883c2",
+      "published_sha256_match": null
+    }
+  ],
+  "record_files": {
+    "count": 4000,
+    "sha256_of_sorted_file_hashes": "a2ce977bd52333720499d08063d076a83bab822acad39272dd1d733371ec6046"
+  }
+}
