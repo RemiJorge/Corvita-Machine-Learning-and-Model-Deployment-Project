@@ -37,9 +37,9 @@
       "n_minus_one": 0,
       "n_out_of_bounds": 16,
       "n_exact_duplicates": 0,
-      "n_after_cutoff": 0,
-      "n_measurements_used": 0,
-      "records_without_any_value_in_24h": 0,
+      "n_after_cutoff": 103986,
+      "n_measurements_used": 124545,
+      "records_without_any_value_in_24h": 71,
       "percentiles": {
         "p0.1": 40.0,
         "p1": 51.0,
@@ -53,9 +53,9 @@
       "n_minus_one": 0,
       "n_out_of_bounds": 62,
       "n_exact_duplicates": 0,
-      "n_after_cutoff": 0,
-      "n_measurements_used": 0,
-      "records_without_any_value_in_24h": 0,
+      "n_after_cutoff": 25500,
+      "n_measurements_used": 29519,
+      "records_without_any_value_in_24h": 2903,
       "percentiles": {
         "p0.1": 0.0,
         "p1": 9.0,
@@ -69,9 +69,9 @@
       "n_minus_one": 0,
       "n_out_of_bounds": 130,
       "n_exact_duplicates": 0,
-      "n_after_cutoff": 0,
-      "n_measurements_used": 0,
-      "records_without_any_value_in_24h": 0,
+      "n_after_cutoff": 36599,
+      "n_measurements_used": 49707,
+      "records_without_any_value_in_24h": 73,
       "percentiles": {
         "p0.1": 1.9,
         "p1": 34.7,
@@ -81,7 +81,7 @@
       }
     }
   },
-  "records_with_all_vitals_missing_in_24h": 0,
+  "records_with_all_vitals_missing_in_24h": 71,
   "resp_rate_missing_vs_mechvent": {
     "note": "optional analysis, see section 9"
   }

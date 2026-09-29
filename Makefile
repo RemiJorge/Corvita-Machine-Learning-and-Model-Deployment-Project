@@ -8,14 +8,14 @@ help: ## List targets with a one-line description
 setup: ## Install dependencies from uv.lock (uv sync --frozen)
 	uv sync --frozen
 
-data: ## Run ingest, parse, and quality (tables in F3)
+data: ## Run ingest, parse, quality, and tables
 	uv run python -m icu.ingest
 	uv run python -m icu.parse
 	uv run python -m icu.quality
+	uv run python -m icu.tables
 
 features: ## Build feature table (python -m icu.features)
-	@echo "not implemented yet: F4"
-	@exit 1
+	uv run python -m icu.features
 
 split: ## Write stratified train, val, and test ID files
 	@echo "not implemented yet: F5"
