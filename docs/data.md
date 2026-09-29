@@ -75,7 +75,7 @@ Bounds rationale: `docs/decisions/002-physiological-bounds.md`.
 
 ### Quality report (F2)
 
-Path: `reports/data_quality.json`. Fields `n_after_cutoff`, `n_measurements_used`, and `*_in_24h` counts are placeholders (0) until F3.
+Path: `reports/data_quality.json`. F2 fields cover parsing and cleaning; F3 (`icu.tables`) fills `n_after_cutoff`, `n_measurements_used`, `records_without_any_value_in_24h` per vital, and `records_with_all_vitals_missing_in_24h`.
 
 Summary from the last full run:
 
@@ -106,8 +106,36 @@ print(df[df.record_id == rid].sort_values(['minute','row_order']).head(12))
 
 Compare printed rows to the first lines of `data/raw/set-a/132539.txt` (same times, parameters, and values after cleaning: `-1` shows as NaN, out-of-range vitals as NaN).
 
+### 24 h cutoff and tables (F3)
+
+`python -m icu.tables` reads cleaned `data/interim/measurements.parquet` and `Outcomes-a.txt`, applies the same cutoff the API will use (`apply_cutoff`, `cutoff_minutes` in config, default 1440), and writes:
+
+| File | Columns | Grain |
+|---|---|---|
+| `data/processed/admission.parquet` | `record_id`, `age`, `gender`, `icu_type`, `in_hospital_death` | one row per record |
+| `data/processed/vitals.parquet` | `record_id`, `minute`, `parameter`, `value`, `row_order` | one row per kept HR, RespRate, or Temp measurement |
+
+Rules:
+
+- A measurement is kept when `minute <= cutoff_minutes` (`24:00` → 1440 included, `24:01` → 1441 excluded).
+- Admission fields come from `00:00` descriptor rows only; later duplicate descriptors are ignored.
+- Vital rows that are missing after F2 cleaning are dropped from `vitals.parquet`.
+- Cutoff exclusion counts are logged and merged into `reports/data_quality.json`.
+
+Check max minute in vitals after a full run:
+
+```bash
+uv run python -c "import pandas as pd; print(pd.read_parquet('data/processed/vitals.parquet').minute.max())"
+```
+
+Expect **1440 or less**.
+
+### Selection bias
+
+Set A only includes patients who stayed in the ICU at least 48 hours. A prediction at 24 hours in practice would also apply to patients who die or leave before 48 hours; those patients, often the most severe, are absent from training and evaluation. Reported performance describes a more homogeneous population than real early ICU mortality screening, and calibration may not transfer. Other limits: single US hospital system, adults only, historical data, three vitals and three admission fields. This does not transfer to neonates in an incubator.
+
 ### Pipeline command
 
-`make data` runs ingest, then parse, then quality. Tables (`icu.tables`) remain for F3.
+`make data` runs ingest, then parse, then quality, then tables.
 
 See `specs/03_DATA_SPEC.md` for the authoritative rules.

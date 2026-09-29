@@ -5,6 +5,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-29
+
+### Added
+
+- F3: `icu.tables` with `apply_cutoff`, `data/processed/admission.parquet` and `vitals.parquet`.
+- F3: Cutoff exclusion and 24 h vital counts merged into `reports/data_quality.json`.
+- F3: `tests/test_tables.py` (boundary tests at minutes 1440 and 1441, admission descriptors).
+- F3: `make data` runs ingest, parse, quality, and tables; `docs/data.md` documents tables and selection bias.
+
 ## [0.3.0] - 2026-09-29
 
 ### Added
