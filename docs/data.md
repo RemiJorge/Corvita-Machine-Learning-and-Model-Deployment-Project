@@ -47,4 +47,67 @@ Model metadata later stores the SHA-256 of `manifest.json` itself as `training_d
 
 ## Later stages (F2 onward)
 
-Parsing, cleaning, the 24 h cutoff, and table builds are documented here as they land in F2 and F3. See `specs/03_DATA_SPEC.md` for the authoritative rules.
+Parsing, cleaning, the 24 h cutoff, and table builds are documented here as they land in F2 and F3. Authoritative rules: `specs/03_DATA_SPEC.md`.
+
+### Parsing (F2)
+
+`python -m icu.parse` reads every `data/raw/set-a/<RecordID>.txt` in sorted file name order.
+
+- CSV header `Time,Parameter,Value`; each body line is split on the first two commas only.
+- `Time` must match `HH:MM` and converts to integer minutes (`24:00` → 1440). Minutes part 60 or more is rejected.
+- `Value` must be numeric. The file name must match the `00:00,RecordID,<id>` descriptor row.
+- Output: `data/interim/measurements.parquet` with columns `record_id`, `minute`, `parameter`, `value`, `row_order`.
+- Integrity checks: number of files equals distinct `record_id` equals rows in `Outcomes-a.txt`; one-to-one join on `record_id`; `In-hospital_death` in `{0, 1}` only.
+- The 24 h cutoff is **not** applied here; rows after minute 1440 remain until F3 (`icu.tables`).
+
+Last run (`make data` on set A): **4000** records, **1 757 980** measurement rows, death rate **0.1385** (554 / 4000).
+
+### Cleaning (F2)
+
+`python -m icu.quality` reads the interim parquet, applies rules in `icu/quality.py` (reused later by the API), and overwrites the same parquet plus `reports/data_quality.json`.
+
+1. `-1` → missing (NaN); counted per parameter (ADR: `docs/decisions/003-handling-minus-one.md`).
+2. Vitals HR, RespRate, Temp outside inclusive `physiological_bounds` in config → NaN; counted per vital.
+3. At minute 0: `Age` outside `admission_bounds.Age`, `Gender` not in `{0, 1}`, `ICUType` not in `{1, 2, 3, 4}` → NaN; counted.
+4. Exact duplicate rows (same `record_id`, `minute`, `parameter`, `value`) dropped; lowest `row_order` kept.
+
+Bounds rationale: `docs/decisions/002-physiological-bounds.md`.
+
+### Quality report (F2)
+
+Path: `reports/data_quality.json`. Fields `n_after_cutoff`, `n_measurements_used`, and `*_in_24h` counts are placeholders (0) until F3.
+
+Summary from the last full run:
+
+| | Value |
+|---|---|
+| `n_records` | 4000 |
+| `n_deaths` / `death_rate` | 554 / 0.1385 |
+| Gender missing (`-1`) | 3 |
+| HR `n_out_of_bounds` | 16 |
+| RespRate `n_out_of_bounds` | 62 |
+| Temp `n_out_of_bounds` | 130 |
+| HR / RespRate / Temp `n_minus_one` | 0 / 0 / 0 |
+
+Percentiles for vitals and Age are in the JSON file under `descriptors` and `vitals`.
+
+### Spot-check raw file vs parquet
+
+Pick a record id present in `data/raw/set-a/` (example **132539**):
+
+```bash
+uv run python -c "
+import pandas as pd
+rid = 132539
+df = pd.read_parquet('data/interim/measurements.parquet')
+print(df[df.record_id == rid].sort_values(['minute','row_order']).head(12))
+"
+```
+
+Compare printed rows to the first lines of `data/raw/set-a/132539.txt` (same times, parameters, and values after cleaning: `-1` shows as NaN, out-of-range vitals as NaN).
+
+### Pipeline command
+
+`make data` runs ingest, then parse, then quality. Tables (`icu.tables`) remain for F3.
+
+See `specs/03_DATA_SPEC.md` for the authoritative rules.
