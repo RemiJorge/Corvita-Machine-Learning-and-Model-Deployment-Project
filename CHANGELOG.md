@@ -5,6 +5,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-30
+
+### Added
+
+- F5: `icu.split` with stratified 70/15/15 split from `admission.parquet`, committed `splits/*.csv`.
+- F5: `tests/test_split.py` (overlap, determinism, death-rate balance on real data).
+- F5: Split procedure and grouping key documented in `docs/modeling.md`.
+- F5: `make split` runs `python -m icu.split`.
+
 ## [0.5.0] - 2026-09-29
 
 ### Added

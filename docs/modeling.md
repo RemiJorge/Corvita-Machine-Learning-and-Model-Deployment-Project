@@ -25,3 +25,22 @@ When several measurements share the latest minute for a vital, the value from th
 ### Output artifact
 
 `make features` writes `data/processed/features.parquet` with `record_id` plus the feature columns. The label stays in `admission.parquet` for splits and training.
+
+## Split (F5)
+
+`icu.split.stratified_split` assigns every `record_id` to train, validation, or test using labels from `admission.parquet` only.
+
+### Procedure
+
+1. Sort all record IDs ascending (with matching labels).
+2. `train_test_split` with `test_size = val + test` (0.30 from config), `stratify=labels`, `random_state=seed`.
+3. Split the holdout with `test_size = test / (val + test)` (0.50), same seed and stratification on holdout labels.
+4. Write sorted IDs to `splits/train_ids.csv`, `splits/val_ids.csv`, `splits/test_ids.csv` (one column `record_id`).
+
+Target fractions are 70 % / 15 % / 15 % from `config/config.yaml`. Actual group sizes follow scikit-learn stratified rounding. For 4000 records this is typically about 2800 train, 600 validation, and 600 test (exact counts appear in the split log).
+
+### Grouping key
+
+Each row is one ICU stay identified by `RecordID`. This dataset does not link multiple stays to the same patient, so patient-level grouping is not possible here. In NOA the grouping key would be the infant, as in the first technical exercise.
+
+`make split` runs `python -m icu.split` and logs size and death rate per group.

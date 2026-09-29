@@ -18,8 +18,7 @@ features: ## Build feature table (python -m icu.features)
 	uv run python -m icu.features
 
 split: ## Write stratified train, val, and test ID files
-	@echo "not implemented yet: F5"
-	@exit 1
+	uv run python -m icu.split
 
 train: ## Tune models on validation and choose threshold
 	@echo "not implemented yet: F6"
