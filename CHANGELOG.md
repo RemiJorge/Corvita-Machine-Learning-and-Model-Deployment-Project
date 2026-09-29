@@ -5,6 +5,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-30
+
+### Added
+
+- F6: `icu.train` with logistic regression and HGB pipelines, validation grid search, and sensitivity-based thresholds.
+- F6: `reports/tuning.csv` and `reports/selection.json`; `make train` runs `python -m icu.train`.
+- F6: `tests/test_train.py` (train-only imputer, threshold rule, no test split in training code, selection tie-breaks).
+- F6: ADRs `docs/decisions/005-no-class-weights.md` and `006-threshold-rule.md`; training section in `docs/modeling.md`.
+
 ## [0.6.0] - 2026-09-30
 
 ### Added

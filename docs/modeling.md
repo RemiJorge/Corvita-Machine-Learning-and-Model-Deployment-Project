@@ -44,3 +44,31 @@ Target fractions are 70 % / 15 % / 15 % from `config/config.yaml`. Actual group 
 Each row is one ICU stay identified by `RecordID`. This dataset does not link multiple stays to the same patient, so patient-level grouping is not possible here. In NOA the grouping key would be the infant, as in the first technical exercise.
 
 `make split` runs `python -m icu.split` and logs size and death rate per group.
+
+## Training and validation selection (F6)
+
+`icu.train` loads `features.parquet` and labels from `admission.parquet`, then keeps only rows whose `record_id` appears in `splits/train_ids.csv` or `splits/val_ids.csv`. The test ID file is not read during training (`python -m icu.train`).
+
+### Pipelines
+
+Logistic regression uses a `ColumnTransformer`: median imputation and scaling on continuous vitals and age, scaling on count features, passthrough on binary and ICU-type columns, then `LogisticRegression` with `C` from the config grid. `HistGradientBoostingClassifier` trains on the raw feature matrix (native missing support), with `early_stopping=False` so tuning uses only the project validation split.
+
+Neither model uses `class_weight` (see `docs/decisions/005-no-class-weights.md`).
+
+### Tuning
+
+Hyperparameter grids live in `config/config.yaml`. Every combination is fit on **training rows only**, scored on validation, and appended to `reports/tuning.csv` (PR-AUC, AUROC, Brier, fit time).
+
+Selection per model:
+
+1. Highest validation PR-AUC.
+2. If two candidates are within 0.005 PR-AUC, lower validation Brier wins.
+3. If still tied: smaller `C` for logistic regression; for HGB, fewer `max_iter`, then smaller `max_depth`.
+
+The winning hyperparameters are not refit on train plus validation. Preparation stays on the training set only so the validation threshold remains consistent with the fitted model. Test evaluation in F7 uses the same train-fitted model.
+
+### Threshold
+
+On validation probabilities for each selected model, the decision threshold is the highest value whose sensitivity is at least `threshold.target_sensitivity` (default 0.80). Validation specificity, precision, and alerts per 100 patients are stored in `reports/selection.json`. The Youden threshold is recorded for comparison only (`docs/decisions/006-threshold-rule.md`).
+
+`make train` runs `python -m icu.train` and writes `reports/tuning.csv` and `reports/selection.json`.

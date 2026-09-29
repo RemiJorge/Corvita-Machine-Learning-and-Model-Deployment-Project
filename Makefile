@@ -21,8 +21,7 @@ split: ## Write stratified train, val, and test ID files
 	uv run python -m icu.split
 
 train: ## Tune models on validation and choose threshold
-	@echo "not implemented yet: F6"
-	@exit 1
+	uv run python -m icu.train
 
 evaluate: ## Score test set and write reports
 	@echo "not implemented yet: F7"
