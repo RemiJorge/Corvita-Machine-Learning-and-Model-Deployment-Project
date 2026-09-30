@@ -5,6 +5,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-30
+
+### Added
+
+- F13: Final `README.md` (results, quick start, limitations, layout).
+- F13: `docs/demo.md` review script per `specs/09_REVIEW_PREP.md`.
+
+### Changed
+
+- F13: Final pass on `docs/model_card.md` (package 1.0.0, abstention, limitations aligned with README).
+- F13: Draft `TIME_LOG.md` and `AI_USAGE.md` for human owner confirmation.
+
+### Fixed
+
+- F13: `make reproduce` Makefile typo (`--save-baseline*` → `--save-baseline`).
+
 ## [0.13.0] - 2026-09-30
 
 ### Added

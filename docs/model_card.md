@@ -1,9 +1,9 @@
 # Model card: ICU in-hospital mortality, first 24 hours
 
-- Model version: 1.0.0 (packaged in F8)
+- Model version: 1.0.0
 - Served model: logistic regression, `C=0.01`
-- Trained on: PhysioNet Challenge 2012 set A, manifest digest `a2ce977bd52333720499d08063d076a83bab822acad39272dd1d733371ec6046`, training split 2800 records
-- Code: git `7d004194cb7a5e6efc433fd877596e1a6d77b3a0`, package 0.9.0
+- Trained on: PhysioNet Challenge 2012 set A, manifest SHA-256 `62e4ef454575a8341342869172429646bb73c25fa46ec19b291612caf0c41eb7` (hash of `data/manifest.json` at package time), training split 2800 records
+- Code: git `7d004194cb7a5e6efc433fd877596e1a6d77b3a0` (from `models/1.0.0/metadata.json`), package 1.0.0
 
 ## Intended use
 
@@ -41,16 +41,17 @@ Natural subgroups on the test set are in `reports/missing_vitals.json`. About 42
 
 Ablation (drop vital measurements for all test records, recompute features): removing **RespRate** lowers served-model PR-AUC by about 0.016 and AUROC by about 0.053 versus the full test set, so the model relies on respiratory rate and monitoring gaps matter. Removing HR or Temp alone changes PR-AUC by less than about 0.02 on this split. Dropping all three vitals cuts PR-AUC sharply (see ablation `all_three` in the report).
 
-Abstention when inputs are insufficient is defined in the API spec (F9); not implemented until then.
+The API abstains when no vital has a valid value in the window (`data_quality.status` `insufficient`). See `docs/decisions/008-api-abstention.md`.
 
 ## Limitations
 
-- Adult ICU cohort (2012 challenge); not transferable to neonates or to NOA without retraining.
-- Single geographic era and sensor mix; drift is expected in production.
-- No external validation set beyond this project holdout.
-- Class imbalance handled by thresholding, not class weights.
+- 48 h inclusion rule in set A: early deaths and short stays are missing; see [data.md](data.md#selection-bias).
+- Single hospital system, adult data, 2012 era; three vitals only.
+- Test set 600 records, 83 deaths: wide bootstrap intervals.
+- No external validation; calibration may not transfer.
+- Class imbalance handled by thresholding, not class weights (ADR 005).
 - Split is by record ID, not patient (dataset has no patient linkage).
 
 ## Ethical and safety notes
 
-Probabilities are estimates for a population unlike the one where they would be used. A clinician decides; the model can abstain once the API exists; request logs must not store raw patient values.
+Probabilities are estimates for a population unlike the one where they would be used. A clinician decides; the model abstains when vitals are insufficient; request logs omit patient identifiers and measurement values (`docs/operations.md`).

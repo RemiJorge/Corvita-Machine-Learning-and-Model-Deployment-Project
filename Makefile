@@ -32,7 +32,7 @@ package: ## Write models/<version>/ pipeline and metadata
 reproduce: ## Full pipeline and compare to committed splits and metrics
 	@echo ""
 	@echo "=== Reproduction: saving baseline (splits + metrics.json) ==="
-	uv run python -m icu.artifacts --save-baseline*
+	uv run python -m icu.artifacts --save-baseline
 	@echo ""
 	@echo "=== Reproduction: running data -> features -> split -> train -> evaluate -> package ==="
 	$(MAKE) data features split train evaluate package
