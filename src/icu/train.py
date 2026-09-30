@@ -327,7 +327,8 @@ def tune_on_grid(
         seed: Random seed passed to ``build_fn``.
 
     Returns:
-        One dict per grid point, including metrics and ``fit_seconds``.
+        One dict per grid point with validation metrics and hyperparameters.
+        Fit duration is logged only so committed tuning reports stay byte-stable.
     """
     rows: list[dict[str, Any]] = []
     for params in ParameterGrid(param_grid):
@@ -337,8 +338,14 @@ def tune_on_grid(
         fit_seconds = time.perf_counter() - start
         y_proba = estimator.predict_proba(x_val)[:, 1]
         metrics = score_validation(y_val, y_proba)
-        row = {"model": model_name, **params, **metrics, "fit_seconds": fit_seconds}
+        row = {"model": model_name, **params, **metrics}
         rows.append(row)
+        logger.info(
+            "%s %s fit in %.3fs",
+            model_name,
+            params,
+            fit_seconds,
+        )
     return rows
 
 

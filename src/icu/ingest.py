@@ -206,15 +206,22 @@ def write_manifest(
 ) -> None:
     """Write ``data/manifest.json`` with provenance fields from the data spec."""
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    downloaded_at = datetime.now(tz=UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     payload: dict[str, Any] = {
         "dataset": DATASET_NAME,
         "dataset_version": dataset_version,
         "license": DATASET_LICENSE,
-        "downloaded_at": datetime.now(tz=UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "downloaded_at": downloaded_at,
         "published_checksums": published_checksums,
         "files": file_entries,
         "record_files": record_files,
     }
+    if manifest_path.is_file():
+        existing = json.loads(manifest_path.read_text(encoding="utf-8"))
+        without_ts = {k: v for k, v in payload.items() if k != "downloaded_at"}
+        existing_without_ts = {k: v for k, v in existing.items() if k != "downloaded_at"}
+        if without_ts == existing_without_ts:
+            payload["downloaded_at"] = existing["downloaded_at"]
     manifest_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     logger.info("Wrote manifest %s", manifest_path)
 

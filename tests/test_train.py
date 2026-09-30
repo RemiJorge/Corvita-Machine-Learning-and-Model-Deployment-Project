@@ -85,14 +85,12 @@ def test_select_candidate_prefers_higher_pr_auc() -> None:
             "C": 0.1,
             "val_pr_auc": 0.40,
             "val_brier": 0.20,
-            "fit_seconds": 1.0,
         },
         {
             "model": LOGISTIC_REGRESSION,
             "C": 1.0,
             "val_pr_auc": 0.45,
             "val_brier": 0.22,
-            "fit_seconds": 1.0,
         },
     ]
     chosen = select_candidate(rows, LOGISTIC_REGRESSION)
@@ -106,21 +104,18 @@ def test_select_candidate_tie_break_brier_and_simplicity() -> None:
             "C": 10.0,
             "val_pr_auc": 0.50,
             "val_brier": 0.18,
-            "fit_seconds": 1.0,
         },
         {
             "model": LOGISTIC_REGRESSION,
             "C": 0.1,
             "val_pr_auc": 0.498,
             "val_brier": 0.18,
-            "fit_seconds": 1.0,
         },
         {
             "model": LOGISTIC_REGRESSION,
             "C": 1.0,
             "val_pr_auc": 0.497,
             "val_brier": 0.17,
-            "fit_seconds": 1.0,
         },
     ]
     chosen = select_candidate(rows, LOGISTIC_REGRESSION)
@@ -135,7 +130,6 @@ def test_select_candidate_tie_break_brier_and_simplicity() -> None:
             "max_iter": 300,
             "val_pr_auc": 0.55,
             "val_brier": 0.15,
-            "fit_seconds": 2.0,
         },
         {
             "model": HIST_GRADIENT_BOOSTING,
@@ -145,7 +139,6 @@ def test_select_candidate_tie_break_brier_and_simplicity() -> None:
             "max_iter": 100,
             "val_pr_auc": 0.548,
             "val_brier": 0.15,
-            "fit_seconds": 1.0,
         },
     ]
     hgb_chosen = select_candidate(hgb_rows, HIST_GRADIENT_BOOSTING)

@@ -5,6 +5,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Fixed
+
+- F14: Stop writing `fit_seconds` to `reports/tuning.csv` and `reports/selection.json` so `make reproduce` leaves `git diff splits/ reports/` empty after the demo check (timing is logged at INFO only).
+- F14: Preserve `downloaded_at` in `data/manifest.json` when ingest content is unchanged so `models/1.0.0/metadata.json` stays stable across `make reproduce`.
+
 ## [1.0.0] - 2026-09-30
 
 ### Added

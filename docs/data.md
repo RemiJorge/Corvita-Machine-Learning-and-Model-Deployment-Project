@@ -37,7 +37,7 @@ When a checksum file exists, a mismatch stops the run with an error.
 | Field | Meaning |
 |---|---|
 | `dataset`, `dataset_version`, `license` | Provenance |
-| `downloaded_at` | UTC timestamp of the ingest run |
+| `downloaded_at` | UTC timestamp of the first ingest that produced the current file checksums (unchanged on later `make data` if digests match) |
 | `published_checksums` | Parsed PhysioNet sums, or `null` |
 | `files[]` | Each configured raw file: URL, size, SHA-256, published match flag |
 | `record_files.count` | Number of `*.txt` record files under `data/raw/set-a/` |

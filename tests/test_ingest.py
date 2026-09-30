@@ -96,6 +96,40 @@ def test_write_manifest_roundtrip(tmp_path: Path) -> None:
     assert payload["record_files"] == record_files
 
 
+def test_write_manifest_preserves_downloaded_at_when_unchanged(tmp_path: Path) -> None:
+    """Re-writing the same manifest must not bump ``downloaded_at`` (model metadata digest)."""
+    manifest_path = tmp_path / "manifest.json"
+    files = [
+        {
+            "name": "set-a.tar.gz",
+            "url": "https://example.com/set-a.tar.gz",
+            "bytes": 10,
+            "sha256": "a" * 64,
+            "published_sha256_match": None,
+        }
+    ]
+    record_files = {"count": 2, "sha256_of_sorted_file_hashes": "b" * 64}
+    ingest.write_manifest(
+        manifest_path,
+        dataset_version="1.0.0",
+        base_url="https://example.com/",
+        file_entries=files,
+        record_files=record_files,
+        published_checksums=None,
+    )
+    first = json.loads(manifest_path.read_text(encoding="utf-8"))
+    ingest.write_manifest(
+        manifest_path,
+        dataset_version="1.0.0",
+        base_url="https://example.com/",
+        file_entries=files,
+        record_files=record_files,
+        published_checksums=None,
+    )
+    second = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert second["downloaded_at"] == first["downloaded_at"]
+
+
 def test_compute_record_files_digest(tmp_path: Path) -> None:
     """Aggregate digest is stable for sorted record file hashes."""
     record_dir = tmp_path / "set-a"
