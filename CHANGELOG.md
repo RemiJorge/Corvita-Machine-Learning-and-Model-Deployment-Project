@@ -5,6 +5,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-09-30
+
+### Added
+
+- F10: Structured JSON request logging middleware (`icu/api/request_log.py`) with `REQUEST_LOG_PATH` support.
+- F10: `icu.monitor` monitoring check, `make monitor`, and `tests/test_monitor.py`.
+- F10: `scripts/send_requests.py` and `make simulate` for demo traffic.
+- F10: `docs/operations.md` (monitoring, retrain, release, rollback, log privacy).
+
+### Changed
+
+- F10: `make docker-run` sets `REQUEST_LOG_PATH=/app/logs/requests.jsonl`.
+- F10: `docs/api.md` documents logging fields and privacy rules.
+
 ## [0.10.0] - 2026-09-30
 
 ### Added

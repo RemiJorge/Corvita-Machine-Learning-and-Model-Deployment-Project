@@ -64,15 +64,16 @@ docker-build: ## Build API Docker image tagged corvita-icu-api:$(VERSION)
 docker-run: ## Build image and run on port 8080 with logs/ mounted
 	@mkdir -p logs
 	docker build -t corvita-icu-api:$(VERSION) .
-	docker run --rm -p 8080:8080 -v "$(CURDIR)/logs:/app/logs" corvita-icu-api:$(VERSION)
+	docker run --rm -p 8080:8080 \
+		-e REQUEST_LOG_PATH=/app/logs/requests.jsonl \
+		-v "$(CURDIR)/logs:/app/logs" corvita-icu-api:$(VERSION)
 
-simulate: ## Replay example requests against a running API
-	@echo "not implemented yet: F9"
-	@exit 1
+simulate: ## Replay test-set requests against a running API
+	uv run python scripts/send_requests.py --n 100
 
 monitor: ## Run monitoring check on logs/requests.jsonl
-	@echo "not implemented yet: F10"
-	@exit 1
+	@mkdir -p logs
+	uv run python -m icu.monitor
 
 tf-validate: ## Terraform fmt check, init without backend, validate
 	@echo "not implemented yet: F12"

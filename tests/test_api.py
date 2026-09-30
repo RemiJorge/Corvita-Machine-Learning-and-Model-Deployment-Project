@@ -119,6 +119,32 @@ def test_predict_excludes_after_cutoff(api_client: TestClient) -> None:
     assert body["data_quality"]["n_measurements_used"] == 1
 
 
+def test_logs_contain_no_patient_values(tmp_path: Path, api_client: TestClient) -> None:
+    log_path = tmp_path / "requests.jsonl"
+    payload = _valid_payload()
+    payload["record_id"] = "424242"
+    payload["age"] = 77
+    payload["measurements"] = [
+        {"time": "00:07", "parameter": "HR", "value": 123.45},
+        {"time": "00:37", "parameter": "Temp", "value": 36.5},
+        {"time": "01:07", "parameter": "RespRate", "value": 18},
+    ]
+    response = api_client.post("/predict", json=payload)
+    assert response.status_code == 200
+    assert log_path.is_file()
+    lines = [line for line in log_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    assert len(lines) >= 1
+    log_text = lines[-1]
+    assert "424242" not in log_text
+    assert "123.45" not in log_text
+    assert '"age"' not in log_text
+    assert '"probability"' not in log_text
+    record = json.loads(log_text)
+    assert record["path"] == "/predict"
+    assert record["request_id"]
+    assert record["data_quality_status"] in ("ok", "partial", "insufficient")
+
+
 def test_out_of_range_becomes_missing(api_client: TestClient) -> None:
     payload = {
         "record_id": "101",

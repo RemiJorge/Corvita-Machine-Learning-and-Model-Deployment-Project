@@ -105,6 +105,8 @@ def api_client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Test
     (models_root / "metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
 
     monkeypatch.chdir(tmp_path)
+    request_log = tmp_path / "requests.jsonl"
+    monkeypatch.setenv("REQUEST_LOG_PATH", str(request_log))
     app = create_app(config_path, pipeline=pipeline, metadata=metadata)
     with TestClient(app) as client:
         yield client

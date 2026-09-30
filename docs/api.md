@@ -2,8 +2,6 @@
 
 FastAPI service that scores in-hospital death risk from the first 24 hours of ICU vitals. Clients send raw measurements; the server applies the same cutoff, bounds, and feature code as training (`icu.tables`, `icu.quality`, `icu.features`).
 
-Request JSON logging is added in F10. This page covers F9 endpoints and behaviour.
-
 ## Endpoints
 
 | Method | Path | Purpose |
@@ -33,7 +31,23 @@ If vitals were sent but every value is out of range, status is `partial` (see AD
 |---|---|---|
 | `MODEL_VERSION` | `serving.model_version` in config | Folder under `models/` |
 | `MODELS_DIR` | `models` | Base directory for model folders |
+| `REQUEST_LOG_PATH` | unset | Append the same JSON lines to this file (local demos use `logs/requests.jsonl`) |
 | `PORT` | `8080` | Listen port |
+
+## Request logging
+
+Each HTTP request emits one JSON line to stdout (and to `REQUEST_LOG_PATH` when set). Example for a successful prediction:
+
+```json
+{"ts": "2026-10-03T10:15:02.114Z", "request_id": "…", "path": "/predict", "status_code": 200,
+ "latency_ms": 7.4, "model_version": "1.0.0", "data_quality_status": "partial",
+ "missing_vitals": ["RespRate"], "n_measurements_used": 41, "n_excluded_after_cutoff": 3,
+ "n_out_of_range": 0, "risk_flag": false, "error": null}
+```
+
+422 and 500 responses are logged too; `error` holds a short type (for example `validation_error` or `internal_error`). Latency uses `time.perf_counter()` for the full request.
+
+Never logged: `record_id`, age, gender, ICU type, measurement values, and predicted probability. See `docs/operations.md` for privacy checks and `make monitor`.
 
 ## Errors
 
