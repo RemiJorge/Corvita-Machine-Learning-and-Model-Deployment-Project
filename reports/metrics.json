@@ -1,0 +1,159 @@
+{
+  "test_n": 600,
+  "test_deaths": 83,
+  "train_death_rate": 0.13857142857142857,
+  "served_model": "logistic_regression",
+  "served_model_rule": "Higher validation PR-AUC; if the difference is below 0.01, prefer logistic_regression for calibration, size, speed, and interpretability.",
+  "bootstrap_skipped_resamples": 0,
+  "paired_bootstrap": {
+    "pr_auc_hgb_minus_logreg": {
+      "value": 0.04755949405674759,
+      "ci_low": -0.005595812181201835,
+      "ci_high": 0.10596087777124229,
+      "contains_zero": true
+    },
+    "auroc_hgb_minus_logreg": {
+      "value": 0.03442007876768205,
+      "ci_low": 0.002824414243140447,
+      "ci_high": 0.0639989744883562,
+      "contains_zero": false
+    },
+    "skipped_resamples": 0
+  },
+  "logistic_regression": {
+    "threshold": 0.13113858330514636,
+    "point_metrics": {
+      "pr_auc": 0.3028787118514853,
+      "auroc": 0.7412085479247745,
+      "brier": 0.1098438419797776,
+      "sensitivity": 0.7831325301204819,
+      "specificity": 0.5783365570599613,
+      "precision": 0.22968197879858657,
+      "alerts_per_100": 47.16666666666667
+    },
+    "baselines": {
+      "pr_auc": 0.13833333333333334,
+      "auroc": 0.5,
+      "precision": 0.13833333333333334,
+      "brier": 0.11919727891156462
+    },
+    "confusion_matrix": {
+      "tp": 65,
+      "fp": 218,
+      "tn": 299,
+      "fn": 18
+    },
+    "bootstrap": {
+      "pr_auc": {
+        "value": 0.3028787118514853,
+        "ci_low": 0.22493784254833848,
+        "ci_high": 0.398671392987276,
+        "baseline": 0.13833333333333334
+      },
+      "auroc": {
+        "value": 0.7412085479247745,
+        "ci_low": 0.6843241879544448,
+        "ci_high": 0.7920279438928868,
+        "baseline": 0.5
+      },
+      "sensitivity": {
+        "value": 0.7831325301204819,
+        "ci_low": 0.6867469879518072,
+        "ci_high": 0.8594290865384615,
+        "baseline": null
+      },
+      "specificity": {
+        "value": 0.5783365570599613,
+        "ci_low": 0.5375722543352601,
+        "ci_high": 0.6199664479459596,
+        "baseline": null
+      },
+      "precision": {
+        "value": 0.22968197879858657,
+        "ci_low": 0.18145707982350584,
+        "ci_high": 0.2764505119453925,
+        "baseline": 0.13833333333333334
+      },
+      "brier": {
+        "value": 0.1098438419797776,
+        "ci_low": 0.09032460487966572,
+        "ci_high": 0.12850220724059405,
+        "baseline": 0.11919727891156462
+      },
+      "alerts_per_100": {
+        "value": 47.16666666666667,
+        "ci_low": 43.333333333333336,
+        "ci_high": 51.16666666666667,
+        "baseline": null
+      }
+    }
+  },
+  "hist_gradient_boosting": {
+    "threshold": 0.12911184324079558,
+    "point_metrics": {
+      "pr_auc": 0.3504382059082329,
+      "auroc": 0.7756286266924566,
+      "brier": 0.10530303047749777,
+      "sensitivity": 0.8554216867469879,
+      "specificity": 0.5783365570599613,
+      "precision": 0.24567474048442905,
+      "alerts_per_100": 48.16666666666667
+    },
+    "baselines": {
+      "pr_auc": 0.13833333333333334,
+      "auroc": 0.5,
+      "precision": 0.13833333333333334,
+      "brier": 0.11919727891156462
+    },
+    "confusion_matrix": {
+      "tp": 71,
+      "fp": 218,
+      "tn": 299,
+      "fn": 12
+    },
+    "bootstrap": {
+      "pr_auc": {
+        "value": 0.3504382059082329,
+        "ci_low": 0.267168962570048,
+        "ci_high": 0.4571055852546616,
+        "baseline": 0.13833333333333334
+      },
+      "auroc": {
+        "value": 0.7756286266924566,
+        "ci_low": 0.7241099103449455,
+        "ci_high": 0.8265757161712604,
+        "baseline": 0.5
+      },
+      "sensitivity": {
+        "value": 0.8554216867469879,
+        "ci_low": 0.7788194444444445,
+        "ci_high": 0.926829268292683,
+        "baseline": null
+      },
+      "specificity": {
+        "value": 0.5783365570599613,
+        "ci_low": 0.5354315653181976,
+        "ci_high": 0.6207601496417773,
+        "baseline": null
+      },
+      "precision": {
+        "value": 0.24567474048442905,
+        "ci_low": 0.199324034085632,
+        "ci_high": 0.2968250358604765,
+        "baseline": 0.13833333333333334
+      },
+      "brier": {
+        "value": 0.10530303047749777,
+        "ci_low": 0.0895314428127381,
+        "ci_high": 0.12258381381007671,
+        "baseline": 0.11919727891156462
+      },
+      "alerts_per_100": {
+        "value": 48.16666666666667,
+        "ci_low": 44.333333333333336,
+        "ci_high": 52.166666666666664,
+        "baseline": null
+      }
+    }
+  }
+}

@@ -25,3 +25,62 @@ When several measurements share the latest minute for a vital, the value from th
 ### Output artifact
 
 `make features` writes `data/processed/features.parquet` with `record_id` plus the feature columns. The label stays in `admission.parquet` for splits and training.
+
+## Split (F5)
+
+`icu.split.stratified_split` assigns every `record_id` to train, validation, or test using labels from `admission.parquet` only.
+
+### Procedure
+
+1. Sort all record IDs ascending (with matching labels).
+2. `train_test_split` with `test_size = val + test` (0.30 from config), `stratify=labels`, `random_state=seed`.
+3. Split the holdout with `test_size = test / (val + test)` (0.50), same seed and stratification on holdout labels.
+4. Write sorted IDs to `splits/train_ids.csv`, `splits/val_ids.csv`, `splits/test_ids.csv` (one column `record_id`).
+
+Target fractions are 70 % / 15 % / 15 % from `config/config.yaml`. Actual group sizes follow scikit-learn stratified rounding. For 4000 records this is typically about 2800 train, 600 validation, and 600 test (exact counts appear in the split log).
+
+### Grouping key
+
+Each row is one ICU stay identified by `RecordID`. This dataset does not link multiple stays to the same patient, so patient-level grouping is not possible here. In NOA the grouping key would be the infant, as in the first technical exercise.
+
+`make split` runs `python -m icu.split` and logs size and death rate per group.
+
+## Training and validation selection (F6)
+
+`icu.train` loads `features.parquet` and labels from `admission.parquet`, then keeps only rows whose `record_id` appears in `splits/train_ids.csv` or `splits/val_ids.csv`. The test ID file is not read during training (`python -m icu.train`).
+
+### Pipelines
+
+Logistic regression uses a `ColumnTransformer`: median imputation and scaling on continuous vitals and age, scaling on count features, passthrough on binary and ICU-type columns, then `LogisticRegression` with `C` from the config grid. `HistGradientBoostingClassifier` trains on the raw feature matrix (native missing support), with `early_stopping=False` so tuning uses only the project validation split.
+
+Neither model uses `class_weight` (see `docs/decisions/005-no-class-weights.md`).
+
+### Tuning
+
+Hyperparameter grids live in `config/config.yaml`. Every combination is fit on **training rows only**, scored on validation, and appended to `reports/tuning.csv` (PR-AUC, AUROC, Brier, fit time).
+
+Selection per model:
+
+1. Highest validation PR-AUC.
+2. If two candidates are within 0.005 PR-AUC, lower validation Brier wins.
+3. If still tied: smaller `C` for logistic regression; for HGB, fewer `max_iter`, then smaller `max_depth`.
+
+The winning hyperparameters are not refit on train plus validation. Preparation stays on the training set only so the validation threshold remains consistent with the fitted model. Test evaluation in F7 uses the same train-fitted model.
+
+### Threshold
+
+On validation probabilities for each selected model, the decision threshold is the highest value whose sensitivity is at least `threshold.target_sensitivity` (default 0.80). Validation specificity, precision, and alerts per 100 patients are stored in `reports/selection.json`. The Youden threshold is recorded for comparison only (`docs/decisions/006-threshold-rule.md`).
+
+`make train` runs `python -m icu.train` and writes `reports/tuning.csv` and `reports/selection.json`.
+
+## Test evaluation (F7)
+
+`icu.evaluate` scores the **test split once**. It reads frozen hyperparameters and validation thresholds from `reports/selection.json`, refits both models on **training rows only**, and writes:
+
+- `reports/metrics.json` (point metrics, naive baselines, 1000 bootstrap intervals, paired bootstrap for HGB minus logistic regression)
+- `reports/missing_vitals.json` (natural missing-vital subgroups and vital ablation on test records)
+- `reports/figures/roc.png`, `pr.png`, `calibration.png`
+
+The served model is chosen from **validation** metrics only (`docs/decisions/007-served-model-choice.md`). Test numbers are reported but do not drive that choice.
+
+`make evaluate` runs `python -m icu.evaluate`. Model serialization under `models/` is F8.
