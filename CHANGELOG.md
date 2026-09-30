@@ -5,6 +5,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-30
+
+### Added
+
+- F8: `icu.artifacts` with `save_model`, `load_model`, `metadata.json`, and `models/1.0.0/` (served pipeline plus comparison HGB).
+- F8: `make package` and `make reproduce` with split byte comparison and metrics diff summary (`1e-6` tolerance).
+- F8: `tests/test_artifacts.py` (unknown version, sklearn mismatch, training reference, metric compare).
+
+### Changed
+
+- F8: Artifacts section in `docs/modeling.md`; model card code version updated.
+
 ## [0.8.0] - 2026-09-30
 
 ### Added

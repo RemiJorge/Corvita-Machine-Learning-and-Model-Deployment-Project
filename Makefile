@@ -27,12 +27,19 @@ evaluate: ## Score test set and write reports
 	uv run python -m icu.evaluate
 
 package: ## Write models/<version>/ pipeline and metadata
-	@echo "not implemented yet: F8"
-	@exit 1
+	uv run python -m icu.artifacts
 
 reproduce: ## Full pipeline and compare to committed splits and metrics
-	@echo "not implemented yet: F8"
-	@exit 1
+	@echo ""
+	@echo "=== Reproduction: saving baseline (splits + metrics.json) ==="
+	uv run python -m icu.artifacts --save-baseline*
+	@echo ""
+	@echo "=== Reproduction: running data -> features -> split -> train -> evaluate -> package ==="
+	$(MAKE) data features split train evaluate package
+	@echo ""
+	@echo "=== Reproduction: comparing to baseline ==="
+	uv run python -m icu.artifacts --compare-reproduction
+	@echo ""
 
 lint: ## Run ruff check and format check
 	uv run ruff check .

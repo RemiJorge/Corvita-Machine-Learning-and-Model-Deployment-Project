@@ -15,6 +15,7 @@ data/processed/
 
 # Logs and local runtime
 logs/
+.repro_baseline/
 
 # Terraform
 infra/.terraform/

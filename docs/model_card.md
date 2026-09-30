@@ -3,7 +3,7 @@
 - Model version: 1.0.0 (packaged in F8)
 - Served model: logistic regression, `C=0.01`
 - Trained on: PhysioNet Challenge 2012 set A, manifest digest `a2ce977bd52333720499d08063d076a83bab822acad39272dd1d733371ec6046`, training split 2800 records
-- Code: git `1f32e78`, package 0.8.0
+- Code: git `7d004194cb7a5e6efc433fd877596e1a6d77b3a0`, package 0.9.0
 
 ## Intended use
 
