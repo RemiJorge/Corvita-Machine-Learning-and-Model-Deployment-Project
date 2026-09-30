@@ -1,0 +1,13 @@
+project_id = "<your-gcp-project-id>"
+region     = "northamerica-northeast1"
+env        = "demo"
+
+# Build and push the image before applying the Cloud Run service (see infra/README.md).
+image = "northamerica-northeast1-docker.pkg.dev/<your-gcp-project-id>/icu-api/icu-api:1.0.0"
+
+model_version          = "1.0.0"
+allow_public_invoker   = false
+data_team_members      = []
+billing_account_id     = ""
+budget_amount          = 5
+force_destroy_bucket   = false

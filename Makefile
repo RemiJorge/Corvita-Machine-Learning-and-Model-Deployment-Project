@@ -76,8 +76,9 @@ monitor: ## Run monitoring check on logs/requests.jsonl
 	uv run python -m icu.monitor
 
 tf-validate: ## Terraform fmt check, init without backend, validate
-	@echo "not implemented yet: F12"
-	@exit 1
+	terraform -chdir=infra fmt -check -recursive
+	terraform -chdir=infra init -backend=false
+	terraform -chdir=infra validate
 
 clean: ## Remove interim and processed data and Python caches
 	rm -rf data/interim data/processed

@@ -5,6 +5,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-09-30
+
+### Added
+
+- F12: Terraform stack under `infra/` for GCP (Cloud Run, Artifact Registry, GCS artifacts, IAM, optional budget and public invoker).
+- F12: `docs/infrastructure.md`, `infra/README.md`, ADRs 010 (GCP) and 011 (public invoker demo).
+- F12: `make tf-validate` and committed `infra/.terraform.lock.hcl` (google provider ~> 6.0).
+
+### Changed
+
+- F12: `.gitignore` allows `infra/.terraform.lock.hcl`; ignores `infra/terraform.tfvars` and `infra/backend.hcl`.
+
 ## [0.12.0] - 2026-09-30
 
 ### Added
