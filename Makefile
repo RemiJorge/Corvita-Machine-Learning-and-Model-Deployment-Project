@@ -56,16 +56,15 @@ check: ## Lint then run fast tests
 	$(MAKE) test
 
 api: ## Run FastAPI locally with uvicorn reload
-	@echo "not implemented yet: F9"
-	@exit 1
+	uv run uvicorn icu.api.app:app --reload --host 0.0.0.0 --port 8080
 
 docker-build: ## Build API Docker image tagged corvita-icu-api:$(VERSION)
-	@echo "not implemented yet: F9"
-	@exit 1
+	docker build -t corvita-icu-api:$(VERSION) .
 
 docker-run: ## Build image and run on port 8080 with logs/ mounted
-	@echo "not implemented yet: F9"
-	@exit 1
+	@mkdir -p logs
+	docker build -t corvita-icu-api:$(VERSION) .
+	docker run --rm -p 8080:8080 -v "$(CURDIR)/logs:/app/logs" corvita-icu-api:$(VERSION)
 
 simulate: ## Replay example requests against a running API
 	@echo "not implemented yet: F9"

@@ -5,6 +5,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-09-30
+
+### Added
+
+- F9: Prediction API (`icu/api/`) with `/predict` and `/health`, reusing `tables`, `quality`, and `features`.
+- F9: `Dockerfile`, `examples/*.json`, `tests/test_api.py`, and `docs/api.md`.
+- F9: ADRs `008-api-abstention.md` and `009-model-baked-in-image.md`.
+- F9: `make api`, `make docker-build`, and `make docker-run`.
+
+### Changed
+
+- F9: `load_model` accepts optional `models_dir` override for `MODELS_DIR`.
+- F9: Lazy `matplotlib` import in `evaluate.write_figures` so the API image stays dev-free.
+
 ## [0.9.0] - 2026-09-30
 
 ### Added

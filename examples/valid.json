@@ -1,0 +1,13 @@
+{
+  "record_id": "132539",
+  "age": 54,
+  "gender": 1,
+  "icu_type": 4,
+  "measurements": [
+    {"time": "00:07", "parameter": "HR", "value": 73},
+    {"time": "00:37", "parameter": "Temp", "value": 36.5},
+    {"time": "01:07", "parameter": "RespRate", "value": 18},
+    {"time": "02:00", "parameter": "HR", "value": 80},
+    {"time": "03:15", "parameter": "Temp", "value": 36.8}
+  ]
+}

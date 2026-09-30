@@ -271,12 +271,17 @@ def save_model(config_path: Path | str | None = None, repo_root: Path | None = N
     return out_dir
 
 
-def load_model(version: str, config_path: Path | str | None = None) -> tuple[Any, dict[str, Any]]:
+def load_model(
+    version: str,
+    config_path: Path | str | None = None,
+    models_dir: Path | str | None = None,
+) -> tuple[Any, dict[str, Any]]:
     """Load the served pipeline and metadata for a model version.
 
     Args:
         version: Folder name under ``models/`` (for example ``1.0.0``).
         config_path: Optional path to ``config.yaml`` for ``models_dir``.
+        models_dir: Optional override for ``paths.models_dir`` (for example from env).
 
     Returns:
         Tuple of (fitted pipeline or classifier, metadata dict).
@@ -286,6 +291,11 @@ def load_model(version: str, config_path: Path | str | None = None) -> tuple[Any
         ValueError: If the installed scikit-learn version does not match metadata.
     """
     config = load_config(config_path)
+    if models_dir is not None:
+        config = dict(config)
+        paths = dict(config["paths"])
+        paths["models_dir"] = str(models_dir)
+        config["paths"] = paths
     directory = model_dir(config, version)
     if not directory.is_dir():
         msg = f"Unknown model version {version!r}: {directory} does not exist"
