@@ -5,6 +5,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-09-30
+
+### Added
+
+- F11: GitHub Actions CI workflow (`.github/workflows/ci.yml`) with `python`, `docker`, and `terraform` jobs.
+
 ## [0.11.0] - 2026-09-30
 
 ### Added
