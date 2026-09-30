@@ -1,12 +1,12 @@
 {
   "model_version": "1.0.0",
   "served_model": "logistic_regression",
-  "created_at": "2026-09-30T15:00:11Z",
-  "code_version": "0.9.0",
-  "git_commit": "7d004194cb7a5e6efc433fd877596e1a6d77b3a0",
+  "created_at": "2026-09-30T17:20:40Z",
+  "code_version": "1.0.0",
+  "git_commit": "70e245f5f09f1dea70d942559af9b9b9f6678f92",
   "git_dirty": true,
   "dataset_version": "1.0.0",
-  "training_data_sha256": "62e4ef454575a8341342869172429646bb73c25fa46ec19b291612caf0c41eb7",
+  "training_data_sha256": "3d13119ba577e31b155e066f68ada7dfafd09bfd0a8aaf147c9ca56970a17062",
   "split_files_sha256": {
     "train": "729aafc274d48f83823880f333ad4fccf18a88182f625ffd9f27324ed4a28f52",
     "val": "fb9491806d145bd8176e8c88422c5ee7f2b329833f45f5a760d4df6e633be6ab",

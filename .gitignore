@@ -19,9 +19,10 @@ logs/
 
 # Terraform
 infra/.terraform/
+infra/terraform.tfvars
+infra/backend.hcl
 *.tfstate
 *.tfstate.*
-.terraform.lock.hcl
 
 # Editor and OS
 .DS_Store

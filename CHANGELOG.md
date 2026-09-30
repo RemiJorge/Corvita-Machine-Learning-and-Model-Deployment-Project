@@ -5,6 +5,40 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-30
+
+### Added
+
+- F13: Final `README.md` (results, quick start, limitations, layout).
+- F13: `docs/demo.md` review script per `specs/09_REVIEW_PREP.md`.
+
+### Changed
+
+- F13: Final pass on `docs/model_card.md` (package 1.0.0, abstention, limitations aligned with README).
+- F13: Draft `TIME_LOG.md` and `AI_USAGE.md` for human owner confirmation.
+
+### Fixed
+
+- F13: `make reproduce` Makefile typo (`--save-baseline*` → `--save-baseline`).
+
+## [0.13.0] - 2026-09-30
+
+### Added
+
+- F12: Terraform stack under `infra/` for GCP (Cloud Run, Artifact Registry, GCS artifacts, IAM, optional budget and public invoker).
+- F12: `docs/infrastructure.md`, `infra/README.md`, ADRs 010 (GCP) and 011 (public invoker demo).
+- F12: `make tf-validate` and committed `infra/.terraform.lock.hcl` (google provider ~> 6.0).
+
+### Changed
+
+- F12: `.gitignore` allows `infra/.terraform.lock.hcl`; ignores `infra/terraform.tfvars` and `infra/backend.hcl`.
+
+## [0.12.0] - 2026-09-30
+
+### Added
+
+- F11: GitHub Actions CI workflow (`.github/workflows/ci.yml`) with `python`, `docker`, and `terraform` jobs.
+
 ## [0.11.0] - 2026-09-30
 
 ### Added

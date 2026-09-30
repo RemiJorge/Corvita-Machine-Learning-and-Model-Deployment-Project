@@ -32,7 +32,7 @@ package: ## Write models/<version>/ pipeline and metadata
 reproduce: ## Full pipeline and compare to committed splits and metrics
 	@echo ""
 	@echo "=== Reproduction: saving baseline (splits + metrics.json) ==="
-	uv run python -m icu.artifacts --save-baseline*
+	uv run python -m icu.artifacts --save-baseline
 	@echo ""
 	@echo "=== Reproduction: running data -> features -> split -> train -> evaluate -> package ==="
 	$(MAKE) data features split train evaluate package
@@ -76,8 +76,9 @@ monitor: ## Run monitoring check on logs/requests.jsonl
 	uv run python -m icu.monitor
 
 tf-validate: ## Terraform fmt check, init without backend, validate
-	@echo "not implemented yet: F12"
-	@exit 1
+	terraform -chdir=infra fmt -check -recursive
+	terraform -chdir=infra init -backend=false
+	terraform -chdir=infra validate
 
 clean: ## Remove interim and processed data and Python caches
 	rm -rf data/interim data/processed
