@@ -27,12 +27,19 @@ evaluate: ## Score test set and write reports
 	uv run python -m icu.evaluate
 
 package: ## Write models/<version>/ pipeline and metadata
-	@echo "not implemented yet: F8"
-	@exit 1
+	uv run python -m icu.artifacts
 
 reproduce: ## Full pipeline and compare to committed splits and metrics
-	@echo "not implemented yet: F8"
-	@exit 1
+	@echo ""
+	@echo "=== Reproduction: saving baseline (splits + metrics.json) ==="
+	uv run python -m icu.artifacts --save-baseline*
+	@echo ""
+	@echo "=== Reproduction: running data -> features -> split -> train -> evaluate -> package ==="
+	$(MAKE) data features split train evaluate package
+	@echo ""
+	@echo "=== Reproduction: comparing to baseline ==="
+	uv run python -m icu.artifacts --compare-reproduction
+	@echo ""
 
 lint: ## Run ruff check and format check
 	uv run ruff check .
@@ -49,24 +56,24 @@ check: ## Lint then run fast tests
 	$(MAKE) test
 
 api: ## Run FastAPI locally with uvicorn reload
-	@echo "not implemented yet: F9"
-	@exit 1
+	uv run uvicorn icu.api.app:app --reload --host 0.0.0.0 --port 8080
 
 docker-build: ## Build API Docker image tagged corvita-icu-api:$(VERSION)
-	@echo "not implemented yet: F9"
-	@exit 1
+	docker build -t corvita-icu-api:$(VERSION) .
 
 docker-run: ## Build image and run on port 8080 with logs/ mounted
-	@echo "not implemented yet: F9"
-	@exit 1
+	@mkdir -p logs
+	docker build -t corvita-icu-api:$(VERSION) .
+	docker run --rm -p 8080:8080 \
+		-e REQUEST_LOG_PATH=/app/logs/requests.jsonl \
+		-v "$(CURDIR)/logs:/app/logs" corvita-icu-api:$(VERSION)
 
-simulate: ## Replay example requests against a running API
-	@echo "not implemented yet: F9"
-	@exit 1
+simulate: ## Replay test-set requests against a running API
+	uv run python scripts/send_requests.py --n 100
 
 monitor: ## Run monitoring check on logs/requests.jsonl
-	@echo "not implemented yet: F10"
-	@exit 1
+	@mkdir -p logs
+	uv run python -m icu.monitor
 
 tf-validate: ## Terraform fmt check, init without backend, validate
 	@echo "not implemented yet: F12"

@@ -5,6 +5,46 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-09-30
+
+### Added
+
+- F10: Structured JSON request logging middleware (`icu/api/request_log.py`) with `REQUEST_LOG_PATH` support.
+- F10: `icu.monitor` monitoring check, `make monitor`, and `tests/test_monitor.py`.
+- F10: `scripts/send_requests.py` and `make simulate` for demo traffic.
+- F10: `docs/operations.md` (monitoring, retrain, release, rollback, log privacy).
+
+### Changed
+
+- F10: `make docker-run` sets `REQUEST_LOG_PATH=/app/logs/requests.jsonl`.
+- F10: `docs/api.md` documents logging fields and privacy rules.
+
+## [0.10.0] - 2026-09-30
+
+### Added
+
+- F9: Prediction API (`icu/api/`) with `/predict` and `/health`, reusing `tables`, `quality`, and `features`.
+- F9: `Dockerfile`, `examples/*.json`, `tests/test_api.py`, and `docs/api.md`.
+- F9: ADRs `008-api-abstention.md` and `009-model-baked-in-image.md`.
+- F9: `make api`, `make docker-build`, and `make docker-run`.
+
+### Changed
+
+- F9: `load_model` accepts optional `models_dir` override for `MODELS_DIR`.
+- F9: Lazy `matplotlib` import in `evaluate.write_figures` so the API image stays dev-free.
+
+## [0.9.0] - 2026-09-30
+
+### Added
+
+- F8: `icu.artifacts` with `save_model`, `load_model`, `metadata.json`, and `models/1.0.0/` (served pipeline plus comparison HGB).
+- F8: `make package` and `make reproduce` with split byte comparison and metrics diff summary (`1e-6` tolerance).
+- F8: `tests/test_artifacts.py` (unknown version, sklearn mismatch, training reference, metric compare).
+
+### Changed
+
+- F8: Artifacts section in `docs/modeling.md`; model card code version updated.
+
 ## [0.8.0] - 2026-09-30
 
 ### Added

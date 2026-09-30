@@ -1,0 +1,10 @@
+{
+  "record_id": "200001",
+  "age": 62,
+  "gender": 0,
+  "icu_type": 2,
+  "measurements": [
+    {"time": "00:10", "parameter": "Temp", "value": 36.2},
+    {"time": "01:30", "parameter": "Temp", "value": 36.4}
+  ]
+}

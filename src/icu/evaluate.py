@@ -7,10 +7,6 @@ import logging
 from pathlib import Path
 from typing import Any
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.calibration import calibration_curve
@@ -508,6 +504,11 @@ def write_figures(
         figures_dir: Output directory.
         calibration_bins: Number of bins for ``calibration_curve``.
     """
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
     figures_dir.mkdir(parents=True, exist_ok=True)
     n = len(y_test)
     deaths = int(np.sum(y_test == 1))

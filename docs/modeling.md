@@ -84,3 +84,11 @@ On validation probabilities for each selected model, the decision threshold is t
 The served model is chosen from **validation** metrics only (`docs/decisions/007-served-model-choice.md`). Test numbers are reported but do not drive that choice.
 
 `make evaluate` runs `python -m icu.evaluate`. Model serialization under `models/` is F8.
+
+## Artifacts (F8)
+
+`icu.artifacts.save_model` refits both models on training rows with hyperparameters frozen from `reports/selection.json`, then writes the served pipeline to `models/<model_version>/pipeline.joblib` and the comparison HGB model to `models/<model_version>/comparison/hist_gradient_boosting.joblib`. `metadata.json` records git commit, manifest digest, split file hashes, validation and test metrics for the served model, and a `training_reference` block from training rows for monitoring.
+
+`load_model(version)` returns the served pipeline and metadata. It checks that the installed scikit-learn version matches the one stored in metadata. Only load joblib files from trusted sources.
+
+`make package` runs `python -m icu.artifacts`. `make reproduce` saves a baseline of `splits/*.csv` and `reports/metrics.json`, reruns the full pipeline, then prints a short summary block (split status, metric count, max absolute diff, pass or fail). Numeric metrics must match within `1e-6` absolute difference.

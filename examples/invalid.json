@@ -1,0 +1,9 @@
+{
+  "record_id": "999",
+  "age": 54,
+  "gender": 1,
+  "icu_type": 7,
+  "measurements": [
+    {"time": "25:61", "parameter": "HR", "value": 73}
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "model_version": "1.0.0",
+  "served_model": "logistic_regression",
+  "created_at": "2026-09-30T15:00:11Z",
+  "code_version": "0.9.0",
+  "git_commit": "7d004194cb7a5e6efc433fd877596e1a6d77b3a0",
+  "git_dirty": true,
+  "dataset_version": "1.0.0",
+  "training_data_sha256": "62e4ef454575a8341342869172429646bb73c25fa46ec19b291612caf0c41eb7",
+  "split_files_sha256": {
+    "train": "729aafc274d48f83823880f333ad4fccf18a88182f625ffd9f27324ed4a28f52",
+    "val": "fb9491806d145bd8176e8c88422c5ee7f2b329833f45f5a760d4df6e633be6ab",
+    "test": "9f0a795899fa4cd8f51344e47678e28f5c1967a275aa7fd160c66131646c64e6"
+  },
+  "seed": 42,
+  "cutoff_minutes": 1440,
+  "physiological_bounds": {
+    "HR": [
+      20,
+      300
+    ],
+    "RespRate": [
+      1,
+      80
+    ],
+    "Temp": [
+      25.0,
+      45.0
+    ]
+  },
+  "feature_columns": [
+    "age",
+    "gender_male",
+    "gender_missing",
+    "icu_type_1",
+    "icu_type_2",
+    "icu_type_3",
+    "icu_type_4",
+    "hr_count",
+    "hr_mean",
+    "hr_last",
+    "hr_missing",
+    "resp_rate_count",
+    "resp_rate_mean",
+    "resp_rate_last",
+    "resp_rate_missing",
+    "temp_count",
+    "temp_mean",
+    "temp_last",
+    "temp_missing"
+  ],
+  "hyperparameters": {
+    "C": 0.01
+  },
+  "threshold": 0.13113858330514636,
+  "target_sensitivity": 0.8,
+  "validation_metrics": {
+    "val_pr_auc": 0.3809308136263675,
+    "val_auroc": 0.7719232830742699,
+    "val_brier": 0.10710653386702129
+  },
+  "test_metrics": {
+    "point_metrics": {
+      "pr_auc": 0.3028787118514853,
+      "auroc": 0.7412085479247745,
+      "brier": 0.1098438419797776,
+      "sensitivity": 0.7831325301204819,
+      "specificity": 0.5783365570599613,
+      "precision": 0.22968197879858657,
+      "alerts_per_100": 47.16666666666667
+    },
+    "bootstrap": {
+      "pr_auc": {
+        "value": 0.3028787118514853,
+        "ci_low": 0.22493784254833848,
+        "ci_high": 0.398671392987276,
+        "baseline": 0.13833333333333334
+      },
+      "auroc": {
+        "value": 0.7412085479247745,
+        "ci_low": 0.6843241879544448,
+        "ci_high": 0.7920279438928868,
+        "baseline": 0.5
+      },
+      "sensitivity": {
+        "value": 0.7831325301204819,
+        "ci_low": 0.6867469879518072,
+        "ci_high": 0.8594290865384615,
+        "baseline": null
+      },
+      "specificity": {
+        "value": 0.5783365570599613,
+        "ci_low": 0.5375722543352601,
+        "ci_high": 0.6199664479459596,
+        "baseline": null
+      },
+      "precision": {
+        "value": 0.22968197879858657,
+        "ci_low": 0.18145707982350584,
+        "ci_high": 0.2764505119453925,
+        "baseline": 0.13833333333333334
+      },
+      "brier": {
+        "value": 0.1098438419797776,
+        "ci_low": 0.09032460487966572,
+        "ci_high": 0.12850220724059405,
+        "baseline": 0.11919727891156462
+      },
+      "alerts_per_100": {
+        "value": 47.16666666666667,
+        "ci_low": 43.333333333333336,
+        "ci_high": 51.16666666666667,
+        "baseline": null
+      }
+    }
+  },
+  "training_reference": {
+    "missing_rate": {
+      "HR": 0.018214285714285714,
+      "RespRate": 0.7314285714285714,
+      "Temp": 0.01892857142857143
+    },
+    "partial_rate": 0.7135714285714285,
+    "insufficient_rate": 0.018214285714285714,
+    "feature_quantiles": {
+      "age": {
+        "p5": 30.0,
+        "p25": 52.0,
+        "p50": 67.0,
+        "p75": 78.0,
+        "p95": 88.0
+      },
+      "gender_male": {
+        "p5": 0.0,
+        "p25": 0.0,
+        "p50": 1.0,
+        "p75": 1.0,
+        "p95": 1.0
+      },
+      "hr_mean": {
+        "p5": 62.551086956521736,
+        "p25": 76.89189189189189,
+        "p50": 86.3225806451613,
+        "p75": 97.22222222222223,
+        "p95": 114.65461956521739
+      },
+      "hr_last": {
+        "p5": 60.0,
+        "p25": 74.0,
+        "p50": 85.0,
+        "p75": 98.0,
+        "p95": 118.0
+      },
+      "resp_rate_mean": {
+        "p5": 14.13140243902439,
+        "p25": 16.709627329192546,
+        "p50": 18.959030100334445,
+        "p75": 22.0,
+        "p95": 27.414983164983166
+      },
+      "resp_rate_last": {
+        "p5": 12.0,
+        "p25": 16.0,
+        "p50": 19.0,
+        "p75": 23.0,
+        "p95": 28.449999999999932
+      },
+      "temp_mean": {
+        "p5": 35.97150943396227,
+        "p25": 36.54058823529412,
+        "p50": 36.9375,
+        "p75": 37.35751879699248,
+        "p95": 38.03625
+      },
+      "temp_last": {
+        "p5": 35.8,
+        "p25": 36.6,
+        "p50": 37.1,
+        "p75": 37.6,
+        "p95": 38.3
+      }
+    }
+  },
+  "library_versions": {
+    "python": "3.14.4",
+    "scikit-learn": "1.9.1",
+    "pandas": "3.0.6",
+    "numpy": "2.5.3"
+  }
+}
