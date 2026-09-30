@@ -81,8 +81,5 @@
       }
     }
   },
-  "records_with_all_vitals_missing_in_24h": 71,
-  "resp_rate_missing_vs_mechvent": {
-    "note": "optional analysis, see section 9"
-  }
+  "records_with_all_vitals_missing_in_24h": 71
 }

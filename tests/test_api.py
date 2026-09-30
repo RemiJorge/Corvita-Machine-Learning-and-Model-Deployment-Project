@@ -9,7 +9,7 @@ import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 
-from icu.api.service import predict_from_request
+from icu.api.service import ABSTENTION_WARNING, predict_from_request
 from icu.artifacts import load_model
 from icu.config import load_config
 from icu.features import FEATURE_COLUMNS, compute_features
@@ -41,6 +41,18 @@ def test_health(api_client: TestClient) -> None:
     body = response.json()
     assert body["status"] == "ok"
     assert body["model_version"] == "test"
+
+
+def test_predict_non_numeric_record_id(api_client: TestClient) -> None:
+    payload_numeric = _valid_payload()
+    payload_alpha = _valid_payload()
+    payload_alpha["record_id"] = "patient-A12"
+    response_numeric = api_client.post("/predict", json=payload_numeric)
+    response_alpha = api_client.post("/predict", json=payload_alpha)
+    assert response_numeric.status_code == 200
+    assert response_alpha.status_code == 200
+    assert response_alpha.json()["record_id"] == "patient-A12"
+    assert response_alpha.json()["probability"] == response_numeric.json()["probability"]
 
 
 def test_predict_valid(api_client: TestClient) -> None:
@@ -103,7 +115,7 @@ def test_predict_no_vitals_abstains(api_client: TestClient) -> None:
     assert body["probability"] is None
     assert body["risk_flag"] is None
     assert body["data_quality"]["status"] == "insufficient"
-    assert any("abstains" in w for w in body["warnings"])
+    assert ABSTENTION_WARNING in body["warnings"]
 
 
 def test_predict_excludes_after_cutoff(api_client: TestClient) -> None:
@@ -159,6 +171,7 @@ def test_out_of_range_becomes_missing(api_client: TestClient) -> None:
     assert body["data_quality"]["status"] == "partial"
     assert body["data_quality"]["n_out_of_range"] == 1
     assert "HR" in body["data_quality"]["missing_vitals"]
+    assert any("1 measurement value was" in w for w in body["warnings"])
 
 
 def _minute_to_time(minute: int) -> str:
