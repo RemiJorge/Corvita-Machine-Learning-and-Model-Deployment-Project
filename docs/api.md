@@ -168,7 +168,7 @@ curl -s -X POST localhost:8080/predict \
         "n_out_of_range": 0
     },
     "warnings": [
-        "No valid vital sign in the first 24 hours. The model abstains because such inputs are outside what it was trained on."
+        "No valid vital sign in the first 24 hours. The model abstains because the score would rest on age, sex and ICU type only."
     ]
 }
 ```

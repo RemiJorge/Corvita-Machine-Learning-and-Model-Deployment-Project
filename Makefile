@@ -65,6 +65,7 @@ docker-run: ## Build image and run on port 8080 with logs/ mounted
 	@mkdir -p logs
 	docker build -t corvita-icu-api:$(VERSION) .
 	docker run --rm -p 8080:8080 \
+		--user "$$(id -u):$$(id -g)" \
 		-e REQUEST_LOG_PATH=/app/logs/requests.jsonl \
 		-v "$(CURDIR)/logs:/app/logs" corvita-icu-api:$(VERSION)
 

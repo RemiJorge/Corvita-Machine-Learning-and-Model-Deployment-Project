@@ -228,9 +228,6 @@ def build_quality_report(
         "descriptors": descriptors,
         "vitals": vitals_report,
         "records_with_all_vitals_missing_in_24h": 0,
-        "resp_rate_missing_vs_mechvent": {
-            "note": "optional analysis, see section 9",
-        },
     }
 
 

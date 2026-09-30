@@ -14,20 +14,17 @@ from icu.tables import apply_cutoff, build_vitals_table, count_cutoff_exclusions
 
 _VITAL_NAMES = ("HR", "RespRate", "Temp")
 ABSTENTION_WARNING = (
-    "No valid vital sign in the first 24 hours. The model abstains because such inputs "
-    "are outside what it was trained on."
+    "No valid vital sign in the first 24 hours. The model abstains because the score "
+    "would rest on age, sex and ICU type only."
 )
 
-
-def _record_id_int(record_id: str | None) -> int:
-    if record_id is None:
-        return 0
-    return int(record_id)
+# record_id is tracing only; feature pipeline uses a fixed internal id.
+_INTERNAL_RECORD_ID = 0
 
 
 def measurements_to_frame(request: PredictRequest) -> pd.DataFrame:
     """Convert API measurements to the long table used in training."""
-    rid = _record_id_int(request.record_id)
+    rid = _INTERNAL_RECORD_ID
     rows: list[dict[str, object]] = []
     for order, measurement in enumerate(request.measurements):
         minute = time_to_minutes(measurement.time)
@@ -82,9 +79,10 @@ def build_warnings(
     if n_excluded_after_cutoff > 0:
         warnings.append(f"{n_excluded_after_cutoff} measurements after 24:00 were excluded.")
     if n_out_of_range > 0:
+        noun = "value" if n_out_of_range == 1 else "values"
+        verb = "was" if n_out_of_range == 1 else "were"
         warnings.append(
-            f"{n_out_of_range} measurement values were outside physiological bounds "
-            "and were ignored."
+            f"{n_out_of_range} measurement {noun} {verb} outside physiological bounds and ignored."
         )
     if status == "partial" and missing_vitals:
         joined = ", ".join(missing_vitals)
@@ -124,16 +122,7 @@ def predict_from_request(
     Returns:
         Response model with probability or abstention.
 
-    Raises:
-        ValueError: If record_id is not numeric when provided.
     """
-    if request.record_id is not None:
-        try:
-            _record_id_int(request.record_id)
-        except ValueError as exc:
-            msg = "record_id must be numeric when provided"
-            raise ValueError(msg) from exc
-
     vitals: list[str] = list(config["vitals"])
     cutoff = int(config["cutoff_minutes"])
     bounds = config["physiological_bounds"]
@@ -161,7 +150,7 @@ def predict_from_request(
     admission = pd.DataFrame(
         [
             {
-                "record_id": _record_id_int(request.record_id),
+                "record_id": _INTERNAL_RECORD_ID,
                 "age": request.age,
                 "gender": request.gender,
                 "icu_type": request.icu_type,

@@ -28,10 +28,4 @@ infra/backend.hcl
 .DS_Store
 *.swp
 
-AGENTS.md
 CLAUDE.md
-
-# specs
-specs/*.md
-specs/*/*.md
-specs/*.pdf

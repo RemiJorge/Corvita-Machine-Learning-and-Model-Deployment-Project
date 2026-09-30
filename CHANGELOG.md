@@ -5,8 +5,26 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-09-30
+
+### Added
+
+- F15: `docs/decisions/001-reject-unknown-parameters.md`, MIT `LICENSE`, PhysioNet challenge citation in README, committed `specs/` and `AGENTS.md`.
+- F15: `tests/test_doc_identifiers.py` to keep manifest digest and git commit in README and model card aligned with `metadata.json`.
+- F15: `.python-version` pinning Python 3.12.
+
+### Changed
+
+- F15: Abstention warning and ADR 008 context; non-numeric `record_id` accepted for tracing (constant internal id).
+- F15: Repackaged `models/1.0.0/` on a clean tree under Python 3.12; README and model card identifiers synced.
+- F15: Served-model and Brier baseline wording in README and model card; model card missingness risk and alert load notes.
+- F15: Typography in README, `TIME_LOG.md`, `AI_USAGE.md`, and `evaluate.py` figure titles; out-of-range warning grammar.
+- F15: `make docker-run` uses `--user` for host-owned `logs/requests.jsonl`.
+- F15: `requires-python = ">=3.12,<3.13"` and updated `uv.lock`.
+
 ### Fixed
 
+- F15: Removed `resp_rate_missing_vs_mechvent` placeholder from `reports/data_quality.json`.
 - F14: Stop writing `fit_seconds` to `reports/tuning.csv` and `reports/selection.json` so `make reproduce` leaves `git diff splits/ reports/` empty after the demo check (timing is logged at INFO only).
 - F14: Preserve `downloaded_at` in `data/manifest.json` when ingest content is unchanged so `models/1.0.0/metadata.json` stays stable across `make reproduce`.
 
