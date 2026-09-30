@@ -1,9 +1,9 @@
 {
   "model_version": "1.0.0",
   "served_model": "logistic_regression",
-  "created_at": "2026-09-30T17:20:40Z",
+  "created_at": "2026-09-30T19:58:01Z",
   "code_version": "1.0.0",
-  "git_commit": "70e245f5f09f1dea70d942559af9b9b9f6678f92",
+  "git_commit": "41698a5da0846ccb1441e354f5c18ee063662ad1",
   "git_dirty": true,
   "dataset_version": "1.0.0",
   "training_data_sha256": "3d13119ba577e31b155e066f68ada7dfafd09bfd0a8aaf147c9ca56970a17062",

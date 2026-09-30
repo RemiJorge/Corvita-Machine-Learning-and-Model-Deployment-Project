@@ -57,7 +57,7 @@ Neither model uses `class_weight` (see `docs/decisions/005-no-class-weights.md`)
 
 ### Tuning
 
-Hyperparameter grids live in `config/config.yaml`. Every combination is fit on **training rows only**, scored on validation, and appended to `reports/tuning.csv` (PR-AUC, AUROC, Brier, fit time).
+Hyperparameter grids live in `config/config.yaml`. Every combination is fit on **training rows only**, scored on validation, and appended to `reports/tuning.csv` (PR-AUC, AUROC, Brier). Fit duration is logged at INFO only so `make reproduce` does not rewrite timing noise in Git.
 
 Selection per model:
 
