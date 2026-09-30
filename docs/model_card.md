@@ -37,7 +37,7 @@ See `reports/figures/calibration.png`. On the test set, HGB has a slightly lower
 
 ## Behaviour with missing vitals
 
-On the test set, records missing at least one vital have an observed death rate of 70/421 (16.6 %) versus 13/179 (7.3 %) for records with all three vitals present. RespRate is the main gap: about 73 % of training records have no RespRate measurement in the first 24 hours (`reports/data_quality.json`, `records_without_any_value_in_24h` for RespRate).
+On the test set, records missing at least one vital have an observed death rate of 70/421 (16.6 %) versus 13/179 (7.3 %) for records with all three vitals present. RespRate is the main gap: about 73 % of training records have no RespRate measurement in the first 24 hours (`reports/data_quality.json`, `records_without_any_value_in_24h` for RespRate). On the full set A cohort, every record with `MechVent = 1` in the first 24 h lacks a RespRate value in the same window (2405/2405); RespRate is never recorded alongside active ventilation in this extract, which supports the missing-data flags as clinical signal rather than random dropout.
 
 Natural subgroups on the test set are in `reports/missing_vitals.json`. About 421 of 600 test records miss at least one vital in the window; metrics remain computable there but specificity drops versus the full test set.
 

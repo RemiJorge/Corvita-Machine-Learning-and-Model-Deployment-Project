@@ -160,6 +160,69 @@ def _descriptor_row(df: pd.DataFrame, parameter: str) -> pd.Series:
     return sub.set_index("record_id")["value"]
 
 
+def _cell_stats(mask: pd.Series, death: pd.Series) -> dict[str, float | int]:
+    """Count records and deaths where ``mask`` is True."""
+    n_records = int(mask.sum())
+    n_deaths = int(death.loc[mask].sum())
+    rate = n_deaths / n_records if n_records else 0.0
+    return {"n_records": n_records, "n_deaths": n_deaths, "death_rate": rate}
+
+
+def compute_resp_rate_mechvent_crosstab(
+    cleaned: pd.DataFrame,
+    outcomes: pd.DataFrame,
+    cutoff_minutes: int,
+) -> dict[str, Any]:
+    """Cross-tab RespRate missing in the first 24 h against any MechVent=1 in the same window.
+
+    RespRate missing uses the same rule as ``records_without_any_value_in_24h`` for RespRate.
+    MechVent is for this report only and is not a model feature.
+
+    Args:
+        cleaned: F2-cleaned long measurements.
+        outcomes: Columns ``record_id``, ``in_hospital_death``.
+        cutoff_minutes: Inclusive upper minute bound (e.g. 1440).
+
+    Returns:
+        JSON-serializable block for ``resp_rate_missing_vs_mechvent``.
+
+    Raises:
+        ValueError: If the four cells do not cover every outcome record exactly once.
+    """
+    record_ids = outcomes["record_id"].astype(int)
+    death = outcomes.set_index("record_id")["in_hospital_death"].astype(int)
+
+    in_window = cleaned.loc[cleaned["minute"] <= cutoff_minutes]
+
+    resp_window = in_window.loc[in_window["parameter"] == "RespRate"]
+    has_resp = resp_window.groupby("record_id")["value"].apply(lambda s: s.notna().any())
+    resp_missing = ~has_resp.reindex(record_ids, fill_value=False)
+
+    mech_window = in_window.loc[
+        (in_window["parameter"] == "MechVent") & (in_window["value"] == 1.0)
+    ]
+    mech_vent_by_record = mech_window.groupby("record_id").size().astype(bool)
+    mechvent = mech_vent_by_record.reindex(record_ids, fill_value=False)
+
+    death_aligned = death.reindex(record_ids, fill_value=0)
+
+    cells = {
+        "resp_rate_present_mechvent_no": _cell_stats(~resp_missing & ~mechvent, death_aligned),
+        "resp_rate_present_mechvent_yes": _cell_stats(~resp_missing & mechvent, death_aligned),
+        "resp_rate_missing_mechvent_no": _cell_stats(resp_missing & ~mechvent, death_aligned),
+        "resp_rate_missing_mechvent_yes": _cell_stats(resp_missing & mechvent, death_aligned),
+    }
+    total = sum(int(c["n_records"]) for c in cells.values())
+    if total != len(record_ids):
+        msg = f"MechVent crosstab covers {total} records, expected {len(record_ids)}"
+        raise ValueError(msg)
+
+    return {
+        "cutoff_minutes": cutoff_minutes,
+        "cells": cells,
+    }
+
+
 def build_quality_report(
     measurements_raw: pd.DataFrame,
     measurements_clean: pd.DataFrame,
@@ -221,6 +284,13 @@ def build_quality_report(
             "percentiles": vital_percentiles.get(vital, {}),
         }
 
+    cutoff_minutes = int(config["cutoff_minutes"])
+    mechvent_block = compute_resp_rate_mechvent_crosstab(
+        measurements_clean,
+        outcomes,
+        cutoff_minutes,
+    )
+
     return {
         "n_records": n_records,
         "n_deaths": n_deaths,
@@ -228,6 +298,7 @@ def build_quality_report(
         "descriptors": descriptors,
         "vitals": vitals_report,
         "records_with_all_vitals_missing_in_24h": 0,
+        "resp_rate_missing_vs_mechvent": mechvent_block,
     }
 
 

@@ -73,3 +73,25 @@ def test_exact_duplicates_dropped() -> None:
     hr_rows = cleaned[(cleaned["parameter"] == "HR") & (cleaned["minute"] == 15)]
     assert len(hr_rows) == 1
     assert dup_counts.get("HR", 0) == 1
+
+
+def test_resp_rate_mechvent_crosstab_sums_to_records() -> None:
+    """Four crosstab cells partition all records in outcomes."""
+    cleaned = pd.DataFrame(
+        {
+            "record_id": [1, 1, 2, 2, 3],
+            "minute": [10, 10, 5, 5, 100],
+            "parameter": ["RespRate", "MechVent", "RespRate", "MechVent", "MechVent"],
+            "value": [18.0, 1.0, np.nan, 1.0, 1.0],
+            "row_order": [0, 1, 0, 1, 0],
+        }
+    )
+    outcomes = pd.DataFrame(
+        {"record_id": [1, 2, 3], "in_hospital_death": [1, 0, 1]},
+    )
+    block = quality.compute_resp_rate_mechvent_crosstab(cleaned, outcomes, cutoff_minutes=1440)
+    cells = block["cells"]
+    total = sum(cells[k]["n_records"] for k in cells)
+    assert total == 3
+    assert cells["resp_rate_present_mechvent_yes"]["n_records"] == 1
+    assert cells["resp_rate_missing_mechvent_yes"]["n_records"] == 2

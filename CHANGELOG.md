@@ -5,6 +5,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-30
+
+### Added
+
+- O0: `resp_rate_missing_vs_mechvent` cross-tab in `reports/data_quality.json` (RespRate missing vs any `MechVent=1` in the first 24 h, with death rates per cell).
+- O0: `compute_resp_rate_mechvent_crosstab` in `icu.quality`; tests for crosstab partition and `MechVent` not in `FEATURE_COLUMNS`.
+
+### Changed
+
+- O0: `docs/data.md` and model card note the MechVent association with RespRate missingness.
+
 ## [1.0.1] - 2026-09-30
 
 ### Added

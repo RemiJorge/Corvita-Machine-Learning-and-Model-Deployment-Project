@@ -120,6 +120,11 @@ def test_features_last_value_tiebreak() -> None:
     assert int(row["hr_count"]) == 2
 
 
+def test_mechvent_not_a_feature() -> None:
+    """MechVent is used in the quality report only, never as a model input."""
+    assert "MechVent" not in FEATURE_COLUMNS
+
+
 def test_features_columns_and_order() -> None:
     """Output columns equal FEATURE_COLUMNS in order."""
     admission = pd.DataFrame(

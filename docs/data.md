@@ -91,6 +91,10 @@ Summary from the last full run:
 
 Percentiles for vitals and Age are in the JSON file under `descriptors` and `vitals`.
 
+### RespRate missingness and mechanical ventilation (O0)
+
+In the first 1440 minutes, **2405** records have at least one `MechVent = 1` row; **none** of them also have a non-missing `RespRate` in that window (`resp_rate_present_mechvent_yes`: 0 records). Among the **2903** records with no RespRate in 24 h, **2405** (83 %) coincide with `MechVent = 1`; the remaining **498** have no ventilator flag. Death rate is higher when RespRate is missing without MechVent (95/498, 19.1 %) than when RespRate is present (85/1097, 7.7 %); ventilated records without RespRate are 374/2405 (15.6 %). The pattern supports treating RespRate absence as clinically informative (ventilated patients are monitored differently), which motivates the `resp_rate_missing` feature flag rather than imputing a rate. Full counts: `reports/data_quality.json` → `resp_rate_missing_vs_mechvent`.
+
 ### Spot-check raw file vs parquet
 
 Pick a record id present in `data/raw/set-a/` (example **132539**):

@@ -81,5 +81,30 @@
       }
     }
   },
-  "records_with_all_vitals_missing_in_24h": 71
+  "records_with_all_vitals_missing_in_24h": 71,
+  "resp_rate_missing_vs_mechvent": {
+    "cutoff_minutes": 1440,
+    "cells": {
+      "resp_rate_present_mechvent_no": {
+        "n_records": 1097,
+        "n_deaths": 85,
+        "death_rate": 0.07748404740200547
+      },
+      "resp_rate_present_mechvent_yes": {
+        "n_records": 0,
+        "n_deaths": 0,
+        "death_rate": 0.0
+      },
+      "resp_rate_missing_mechvent_no": {
+        "n_records": 498,
+        "n_deaths": 95,
+        "death_rate": 0.19076305220883535
+      },
+      "resp_rate_missing_mechvent_yes": {
+        "n_records": 2405,
+        "n_deaths": 374,
+        "death_rate": 0.15550935550935552
+      }
+    }
+  }
 }
