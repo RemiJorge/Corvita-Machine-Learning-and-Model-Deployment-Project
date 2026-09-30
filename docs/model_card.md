@@ -41,6 +41,19 @@ On the test set, records missing at least one vital have an observed death rate 
 
 Natural subgroups on the test set are in `reports/missing_vitals.json`. About 421 of 600 test records miss at least one vital in the window; metrics remain computable there but specificity drops versus the full test set.
 
+### Performance by ICUType (test set)
+
+Full numbers and bootstrap intervals: `reports/subgroups.json`. Group sizes sum to 600.
+
+| ICUType | n | deaths | observed death rate | mean predicted (logreg) | mean predicted (HGB) |
+|---|---:|---:|---:|---:|---:|
+| 1 | 92 | 15 | 16.3 % | 13.1 % | 14.6 % |
+| 2 | 114 | 7 | 6.1 % | 10.0 % | 6.2 % |
+| 3 | 238 | 38 | 16.0 % | 17.5 % | 19.0 % |
+| 4 | 156 | 23 | 14.7 % | 12.6 % | 13.2 % |
+
+ICUType 2 has only 7 deaths on the test split, so subgroup metrics are reported as `too few events` (fewer than 10 deaths or 10 survivors); the table still compares observed rate to mean predicted probability. ICUTypes 1, 3, and 4 show mixed calibration: type 3 mean predictions run slightly above the observed rate, while types 1 and 4 run slightly below, with wide bootstrap intervals at this sample size. On NOA, the same observed-versus-predicted breakdown would be run per deploying hospital, incubator firmware version, and gestational age band before trusting scores outside the training mix.
+
 Ablation (drop vital measurements for all test records, recompute features): removing **RespRate** lowers served-model PR-AUC by about 0.016 and AUROC by about 0.053 versus the full test set, so the model relies on respiratory rate and monitoring gaps matter. Removing HR or Temp alone changes PR-AUC by less than about 0.02 on this split. Dropping all three vitals cuts PR-AUC sharply (see ablation `all_three` in the report).
 
 The API abstains when no vital has a valid value in the window (`data_quality.status` `insufficient`). See `docs/decisions/008-api-abstention.md`.

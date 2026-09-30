@@ -38,6 +38,9 @@ logger = logging.getLogger(__name__)
 SELECTION_FILENAME = "selection.json"
 METRICS_FILENAME = "metrics.json"
 MISSING_VITALS_FILENAME = "missing_vitals.json"
+SUBGROUPS_FILENAME = "subgroups.json"
+
+ICU_TYPE_CODES: tuple[str, ...] = ("1", "2", "3", "4")
 
 SERVED_MODEL_PR_AUC_MARGIN = 0.01
 SERVED_MODEL_RULE = (
@@ -431,6 +434,109 @@ def subgroup_analysis(
     return report
 
 
+def _icu_type_mask(frame: pd.DataFrame, icu_type: str) -> pd.Series:
+    """True for rows whose admission ICUType matches ``icu_type`` (1 to 4)."""
+    col = f"icu_type_{icu_type}"
+    if col not in frame.columns:
+        msg = f"Missing ICU type column: {col}"
+        raise ValueError(msg)
+    return frame[col] == 1
+
+
+def subgroup_model_block(
+    y_true: np.ndarray,
+    y_proba: np.ndarray,
+    threshold: float,
+    train_death_rate: float,
+    n_resamples: int,
+    seed: int,
+) -> dict[str, Any] | str:
+    """Subgroup metrics with bootstrap intervals, or ``too few events`` when counts are small.
+
+    Args:
+        y_true: Labels in the subgroup.
+        y_proba: Probabilities in the subgroup.
+        threshold: Validation threshold for this model.
+        train_death_rate: Training death rate for Brier baseline.
+        n_resamples: Bootstrap resample count.
+        seed: Random seed for bootstrap draws.
+
+    Returns:
+        Mean predicted probability, point metrics, and bootstrap CIs, or ``too few events``.
+    """
+    mean_predicted_probability = float(np.mean(y_proba))
+    bundle = metrics_for_subgroup(y_true, y_proba, threshold, train_death_rate)
+    if bundle == "too few events":
+        return {
+            "mean_predicted_probability": mean_predicted_probability,
+            "metrics": "too few events",
+        }
+    bootstrap, skipped = bootstrap_intervals(
+        y_true, y_proba, threshold, train_death_rate, n_resamples, seed
+    )
+    for name in BOOTSTRAP_METRIC_NAMES:
+        bootstrap[name]["baseline"] = bundle["baselines"].get(name)
+    return {
+        "mean_predicted_probability": mean_predicted_probability,
+        "point_metrics": bundle["point_metrics"],
+        "baselines": bundle["baselines"],
+        "confusion_matrix": bundle["confusion_matrix"],
+        "bootstrap": bootstrap,
+        "bootstrap_skipped_resamples": skipped,
+    }
+
+
+def icu_type_subgroup_analysis(
+    test_frame: pd.DataFrame,
+    y_test: np.ndarray,
+    proba_by_model: dict[str, np.ndarray],
+    thresholds: dict[str, float],
+    train_death_rate: float,
+    n_resamples: int,
+    seed: int,
+) -> dict[str, Any]:
+    """ICUType 1 to 4 subgroups on the test set for both models.
+
+    Args:
+        test_frame: Test rows with feature columns (including ``icu_type_*``).
+        y_test: Test labels aligned with ``test_frame``.
+        proba_by_model: Model name to probability array.
+        thresholds: Model name to validation threshold.
+        train_death_rate: Training death rate.
+        n_resamples: Bootstrap resample count from config.
+        seed: Base random seed (offsets per ICU type and model).
+
+    Returns:
+        JSON-serializable report keyed by ICU type code ``"1"`` through ``"4"``.
+    """
+    report: dict[str, Any] = {}
+    for type_idx, code in enumerate(ICU_TYPE_CODES):
+        mask = _icu_type_mask(test_frame, code)
+        y_sub = y_test[mask.to_numpy()]
+        n = int(mask.sum())
+        n_deaths = int(np.sum(y_sub == 1))
+        entry: dict[str, Any] = {
+            "description": f"ICUType {code}",
+            "n": n,
+            "n_deaths": n_deaths,
+            "observed_death_rate": float(n_deaths / n) if n else 0.0,
+            "models": {},
+        }
+        for model_idx, (model_name, proba) in enumerate(proba_by_model.items()):
+            p_sub = proba[mask.to_numpy()]
+            block_seed = seed + 1000 * (type_idx + 1) + 10 * (model_idx + 1)
+            entry["models"][model_name] = subgroup_model_block(
+                y_sub,
+                p_sub,
+                thresholds[model_name],
+                train_death_rate,
+                n_resamples,
+                block_seed,
+            )
+        report[code] = entry
+    return report
+
+
 def ablation_analysis(
     config: dict[str, Any],
     test_ids: list[int],
@@ -706,6 +812,21 @@ def main(config_path: Path | str | None = None) -> None:
     missing_path = reports_dir / MISSING_VITALS_FILENAME
     missing_path.write_text(json.dumps(missing_vitals_doc, indent=2) + "\n", encoding="utf-8")
     logger.info("Wrote %s", missing_path)
+
+    subgroups_doc = {
+        "icu_type": icu_type_subgroup_analysis(
+            test_frame,
+            y_test,
+            proba_by_model,
+            thresholds,
+            train_death_rate,
+            n_resamples,
+            seed,
+        ),
+    }
+    subgroups_path = reports_dir / SUBGROUPS_FILENAME
+    subgroups_path.write_text(json.dumps(subgroups_doc, indent=2) + "\n", encoding="utf-8")
+    logger.info("Wrote %s", subgroups_path)
 
     write_figures(
         y_test,

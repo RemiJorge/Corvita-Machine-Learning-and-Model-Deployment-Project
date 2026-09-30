@@ -5,6 +5,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-01
+
+### Added
+
+- O3: ICUType 1 to 4 subgroup evaluation on the test set (`icu_type_subgroup_analysis`, `subgroup_model_block`); writes `reports/subgroups.json` with bootstrap intervals or `too few events` when deaths or survivors are below 10.
+- O3: Model card table and interpretation for ICU-type calibration on the test set.
+
 ## [1.1.0] - 2026-09-30
 
 ### Added
