@@ -31,3 +31,5 @@ infra/tfplan.*
 *.swp
 
 CLAUDE.md
+
+corvita-visuals

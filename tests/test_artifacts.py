@@ -11,12 +11,20 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 from icu.artifacts import (
+    GIT_COMMIT_UNKNOWN,
     compare_metric_dicts,
     compute_training_reference,
+    git_commit_and_dirty,
     load_model,
 )
 from icu.features import FEATURE_COLUMNS
 from icu.train import CONTINUOUS_COLUMNS
+
+
+def test_git_commit_and_dirty_without_repository(tmp_path: Path) -> None:
+    commit, dirty = git_commit_and_dirty(tmp_path)
+    assert commit == GIT_COMMIT_UNKNOWN
+    assert dirty is False
 
 
 def test_load_model_unknown_version(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

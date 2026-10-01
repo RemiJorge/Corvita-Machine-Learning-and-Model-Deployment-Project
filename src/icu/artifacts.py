@@ -43,6 +43,7 @@ METADATA_FILENAME = "metadata.json"
 HGB_COMPARISON_FILENAME = "hist_gradient_boosting.joblib"
 REPRO_BASELINE_DIRNAME = ".repro_baseline"
 METRIC_COMPARE_TOLERANCE = 1e-6
+GIT_COMMIT_UNKNOWN = "unknown"
 
 VITAL_MISSING_COLUMNS: tuple[str, ...] = ("hr_missing", "resp_rate_missing", "temp_missing")
 
@@ -109,10 +110,8 @@ def git_commit_and_dirty(repo_root: Path) -> tuple[str, bool]:
         repo_root: Repository root for git commands.
 
     Returns:
-        Tuple of (short or full commit hash, dirty flag).
-
-    Raises:
-        RuntimeError: If git is unavailable or not a repository.
+        Tuple of (full commit hash, dirty flag). If git is unavailable or
+        ``repo_root`` is not a repository, returns (:data:`GIT_COMMIT_UNKNOWN`, False).
     """
     try:
         commit = subprocess.check_output(
@@ -127,9 +126,9 @@ def git_commit_and_dirty(repo_root: Path) -> tuple[str, bool]:
             text=True,
             stderr=subprocess.PIPE,
         )
-    except (subprocess.CalledProcessError, FileNotFoundError) as exc:
-        msg = f"Could not read git state from {repo_root}: {exc}"
-        raise RuntimeError(msg) from exc
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        logger.warning("Git unavailable at %s; using placeholder commit in metadata", repo_root)
+        return GIT_COMMIT_UNKNOWN, False
     return commit, bool(status.strip())
 
 
