@@ -19,7 +19,7 @@ Style rules from `AGENTS.md` apply to every page: plain English, short sentences
 | `docs/api.md` | F9, F10 | Schemas, behaviours, examples with real responses, logging policy |
 | `docs/operations.md` | F10 | Monitoring check, drift detection, retraining, release, rollback, incidents |
 | `docs/infrastructure.md` | F12 | Architecture, resource by resource, access model, costs, recovery |
-| `docs/demo.md` | F13 | Review script, see `specs/09_REVIEW_PREP.md` |
+| `docs/demo.md` | F13 | Review script and live change drills |
 | `docs/decisions/*.md` | When decided | ADRs |
 | `infra/README.md` | F12 | Commands, outputs of init and validate, cost estimate, untested steps |
 | `CHANGELOG.md` | Every feature | Keep a Changelog |

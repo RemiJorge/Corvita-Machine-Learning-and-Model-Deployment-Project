@@ -37,7 +37,7 @@ Full API examples: `docs/api.md`. Review demo script: `docs/demo.md`.
 
 [notebooks/analysis.ipynb](notebooks/analysis.ipynb) is a read-only tour of cohort statistics, missing-data patterns, test metrics, and committed figures under `reports/`. It does not retrain models or recompute features. Most cells need only `reports/`; histogram cells need processed tables from `make data`. Re-execute locally with `make notebook` (requires dev dependencies from `make setup`).
 
-Public demo API (when deployed): `curl -s "https://icu-api-demo-ir2das47na-nn.a.run.app/health"`.
+Deployed demo API (optional O1; tear down after the review with `terraform destroy`): `curl -s "https://icu-api-demo-ir2das47na-nn.a.run.app/health"`. OpenAPI: `/docs` on the same host.
 
 ## How it works
 
@@ -80,7 +80,7 @@ Last value at the latest minute uses the highest `row_order` on ties (ADR 004).
 
 Pinned: `uv.lock`, `config/config.yaml` (`seed: 42`, `cutoff_minutes: 1440`, `serving.model_version: 1.0.1`), committed split CSVs under `splits/`, `reports/metrics.json`, and `models/1.0.1/metadata.json` for the served artifact (manifest digest `3d13119ba577e31b155e066f68ada7dfafd09bfd0a8aaf147c9ca56970a17062`, split file hashes, hyperparameters). `make reproduce` compares split files byte-for-byte and metrics with tolerance `1e-6`.
 
-Expected differences across machines: floating-point noise below tolerance, Docker build layer timestamps, and `git_dirty` in metadata if the tree changed after packaging.
+Expected differences across machines: floating-point noise below tolerance, Docker build layer timestamps, and `git_dirty` in metadata if the tree changed after packaging. Archives or copies without `.git` still run `make reproduce`; repackaged `metadata.json` then has `git_commit: "unknown"` (committed `models/` in the zip may still list the build commit until you repackage).
 
 ## API
 
@@ -115,13 +115,13 @@ Each request logs one JSON line to stdout (and to `REQUEST_LOG_PATH` when set): 
 
 Access: callers need `roles/run.invoker`; demo may use `allUsers` (ADR 011). Secrets: none in app; `terraform.tfvars` and `backend.hcl` stay local. State: remote GCS, not in Git. Retention: artifact lifecycle keeps five noncurrent versions; logs 30 days in Cloud Logging. Cost: about $0 for review traffic ([infra/README.md](infra/README.md)). Removal: `terraform destroy`. Recovery: revision rollback, GCS object versions, redeploy in another region ([docs/infrastructure.md](docs/infrastructure.md)).
 
-**Untested without a GCP project:** `terraform apply` was not run for this submission (see [infra/README.md](infra/README.md)); IAM in production, org policy on public invoker, and cold-start timing are also untested.
+**Live GCP demo (O1):** `terraform apply` was run once for review; `/health` and smoke traffic were checked. Deployment date, image tag, and redacted plan summary: [infra/README.md](infra/README.md#deployment-log). Org-policy edge cases and cold-start timing under real idle load were not benchmarked.
 
 ## Optional extras (beyond F0 to F14)
 
 - **O0:** RespRate missingness vs mechanical ventilation (`reports/data_quality.json`, [docs/data.md](docs/data.md)).
 - **O3:** Test-set metrics by ICU type ([reports/subgroups.json](reports/subgroups.json), model card table).
-- **O1:** Cloud Run Terraform, `pull_cloud_logs.sh`, and deployment runbook: **prepared, not executed** on GCP.
+- **O1:** Cloud Run deployed with Terraform; `pull_cloud_logs.sh` runbook in [infra/README.md](infra/README.md).
 - **O2:** PSI drift on binned features (`make monitor`, `--shift` on `send_requests.py`).
 
 ## Data and citation
@@ -147,7 +147,7 @@ External and prospective validation on contemporary cohorts; evaluation without 
 
 ## Project management
 
-Human time is logged in [docs/process/TIME_LOG.md](docs/process/TIME_LOG.md). Required features F0 to F14 closed at `v1.0.0`; post-review fixes and optionals through package **1.4.0** ([CHANGELOG.md](CHANGELOG.md)). Specs and agent rules: [docs/process/](docs/process/). Design choices: [docs/decisions/](docs/decisions/).
+Human time: **14 h** of 24 h ([docs/process/TIME_LOG.md](docs/process/TIME_LOG.md)). Required features F0 to F14 closed at `v1.0.0`; post-review fixes, live O1 deploy, and optionals through package **1.4.2** ([CHANGELOG.md](CHANGELOG.md)). Specs and agent rules: [docs/process/](docs/process/). Design choices: [docs/decisions/](docs/decisions/).
 
 ## Use of AI tools
 

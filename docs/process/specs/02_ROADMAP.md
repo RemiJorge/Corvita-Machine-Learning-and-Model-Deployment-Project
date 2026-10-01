@@ -11,7 +11,7 @@ Last updated: 2026-09-30.
 | **Status** | **Submission complete** at package version **1.0.0** (F0 to F14 done) |
 | **Current feature** | None. Optional items O1 to O3 only if the human owner requests them |
 | **Last completed** | F14: Fresh-clone rehearsal and release (see `specs/handoffs/F14-release.md`) |
-| **Read next** | `specs/09_REVIEW_PREP.md` for the live review; optional table at the end of this file |
+| **Read next** | `docs/demo.md` for the live review; optional table at the end of this file |
 | **Git** | Branches, merges, commits and tags are owned by the human; tag `v1.0.0` when ready |
 
 Required roadmap features are finished. The cut list is not in use unless the human owner reopens scope.
@@ -369,7 +369,7 @@ Remove in this order: optional items O1 to O3, the PSI part of monitoring, the p
 
 **Goal.** Prove the submission works for someone else.
 
-**Agent notes.** Human-led rehearsal; agent only fixes blockers found during clone/README walkthrough. Follow `specs/09_REVIEW_PREP.md` and `docs/demo.md`. Finalize `TIME_LOG.md` and `AI_USAGE.md` with the human owner. Tag `v1.0.0` is human-owned after approval. Optional O1 to O3 only after F14 is accepted.
+**Agent notes.** Human-led rehearsal; agent only fixes blockers found during clone/README walkthrough. Follow `docs/demo.md`. Finalize `TIME_LOG.md` and `AI_USAGE.md` with the human owner. Tag `v1.0.0` is human-owned after approval. Optional O1 to O3 only after F14 is accepted.
 
 **Steps.**
 1. Clone the repository into an empty folder.

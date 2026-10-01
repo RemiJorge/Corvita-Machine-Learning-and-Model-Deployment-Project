@@ -66,7 +66,16 @@ Copy `terraform.tfvars.example` to `terraform.tfvars` (git-ignored). Required: `
 
 ## Deployment log
 
-**Prepared, not executed.** This submission validates Terraform locally (`make tf-validate`) and documents the runbook below. No `terraform apply` was run against a GCP project for the review. To deploy: follow the optional steps in this file, fill in date, image tag, redacted plan summary, service URL, rollback notes, and destroy date after `terraform destroy`.
+| Field | Value |
+| --- | --- |
+| Date | 2026-10-01 |
+| Region / service | `northamerica-northeast1` / `icu-api-demo` |
+| Image tag | `icu-api:1.3.0` (Artifact Registry) |
+| Service URL | `https://icu-api-demo-ir2das47na-nn.a.run.app` |
+| Plan summary (redacted) | Enable APIs; Artifact Registry repo `icu-api`; versioned GCS artifacts bucket; Cloud Run service with startup/liveness probes; runtime and deployer service accounts with least-privilege IAM; optional billing budget alert; demo `allUsers` invoker when `allow_public_invoker = true`. No project IDs or secrets in Git. |
+| Smoke checks | `GET /health`; `scripts/send_requests.py` against service URL; optional `pull_cloud_logs.sh` + `icu.monitor` |
+| Rollback | Documented revision traffic shift (runbook below); local image also ships `models/1.0.0` for `MODEL_VERSION` demo |
+| Destroy | Scheduled after the live review (`terraform destroy`); not run yet |
 
 For a local rollback demo without rebuilding the image, restart the container with `MODEL_VERSION=1.0.0` (both model folders are in the image). On Cloud Run, rollback is by image tag or traffic to a previous revision.
 
@@ -164,11 +173,11 @@ Assumptions: a few hundred requests, under one second each, 1 vCPU, 512 MiB RAM,
 
 Expected total for the review period: **$0**, at most a few cents.
 
-## What cannot be tested without a cloud account
+## What still needs a cloud account to verify
 
-- `terraform plan` and `terraform apply`
-- IAM bindings taking effect
+Clones without GCP access can still run `make tf-validate`. After O1 deploy, these were exercised once on a trial project; re-check if you change org policy or region:
+
+- IAM bindings and public invoker (`allUsers`) under your organisation policy
 - Billing budget resource (needs `billing_account_id` and permission)
-- Organisation policies blocking `allUsers`
-- Cold start duration
-- Cloud Logging parsing of API JSON log lines (after deploy: `bash scripts/pull_cloud_logs.sh`, requires `jq`)
+- Cold start duration after long idle
+- Cloud Logging export (`bash scripts/pull_cloud_logs.sh`, requires `jq`)

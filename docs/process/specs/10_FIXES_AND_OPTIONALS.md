@@ -9,7 +9,7 @@ Time used so far: 7.5 h of 24 h (TIME_LOG.md). Planned below: about 9 h.
 | F15 | Consistency fixes | 1.0.1 | 2 h | done |
 | O0 | RespRate missingness vs MechVent | 1.1.0 | 0.5 h | todo |
 | O3 | Subgroups by ICUType | 1.2.0 | 1 h | done |
-| O1 | Real deployment on Cloud Run | 1.3.0 | 3 h | todo |
+| O1 | Real deployment on Cloud Run | 1.3.0 | 2 h | done |
 | O2 | PSI drift check | 1.4.0 | 2 h | todo |
 | F16 | Final rehearsal and tag | 1.4.0 | 0.5 h | todo |
 

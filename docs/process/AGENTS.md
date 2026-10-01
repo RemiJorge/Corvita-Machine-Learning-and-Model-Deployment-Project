@@ -24,7 +24,7 @@ Operating manual for every coding agent working in this repository. Read it in f
 | 7 | `specs/06_QUALITY_CI_MONITORING_SPEC.md` | Every feature (tests), F10 and F11 |
 | 8 | `specs/07_INFRA_SPEC.md` | Feature F12 |
 | 9 | `specs/08_DOCUMENTATION_SPEC.md` | Every feature (docs), F13 |
-| 10 | `specs/09_REVIEW_PREP.md` | F13 and F14 |
+| 10 | `docs/demo.md` | F13 and F14 (live review script) |
 
 ## Non-negotiable rules
 

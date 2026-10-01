@@ -24,4 +24,16 @@ Increase terminal font size. Paste commands from this file. Keep `examples/` ope
 | 16 | `make tf-validate` | Terraform validates; runtime SA has no GCP roles in config | Success messages |
 | 17 | Open `docs/model_card.md` | Test metrics with intervals, threshold rationale, limits | One to two screens of results |
 
-Live change drills and expected questions: `docs/process/specs/09_REVIEW_PREP.md` sections 2 and 3.
+## Live change drills
+
+Rehearse one drill before the review (under five minutes each). Most changes are a `config/config.yaml` edit plus a test.
+
+| Likely request | Where | Steps |
+| --- | --- | --- |
+| Change target sensitivity or threshold | `config/config.yaml` `threshold.target_sensitivity` | Edit, `make train evaluate package` with a new model version, restart with `MODEL_VERSION` |
+| Add a vital aggregation (min, max, std) | `icu/features.py`, `FEATURE_COLUMNS` | Add aggregation, update column list and fixtures, tests, retrain as new major model version |
+| Tighten input validation (e.g. minimum age) | `config/config.yaml` bounds, `icu/api/schemas.py` | Edit, add 422 test, run tests |
+| Add a response field | `icu/api/schemas.py`, `icu/api/service.py` | Field + example response test |
+| Change monitor thresholds or add latency alert | `config/config.yaml`, `icu/monitor.py` | Edit, synthetic log test |
+| Change cutoff to 12 hours | `config/config.yaml` `cutoff_minutes` | Set 720, update boundary tests to 720/721, `make reproduce` |
+| Drop a vital from the model | `config/config.yaml` `vitals`, `FEATURE_COLUMNS` | Edit, tests, retrain |

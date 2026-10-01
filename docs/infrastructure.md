@@ -1,6 +1,6 @@
 # Infrastructure
 
-Terraform in `infra/` describes a demo deployment of the ICU mortality API on Google Cloud. Nothing in this repository applies Terraform to a real project unless a human runs `terraform apply` (optional item O1 in the roadmap).
+Terraform in `infra/` describes a demo deployment of the ICU mortality API on Google Cloud. A one-off `terraform apply` for optional O1 is documented in [infra/README.md](../infra/README.md#deployment-log); tear down with `terraform destroy` after the review.
 
 ## Why Google Cloud
 

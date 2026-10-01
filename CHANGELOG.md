@@ -5,9 +5,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-10-01
+
 ### Added
 
 - Analysis walkthrough notebook at `notebooks/analysis.ipynb` (`make notebook`, Jupyter dev deps only).
+
+### Changed
+
+- Model packaging (`make package`, end of `make reproduce`) no longer requires a Git repository: when `git rev-parse HEAD` is unavailable, metadata uses `git_commit: "unknown"` and `git_dirty: false` (unchanged when Git works).
+- Doc identifier test skips model-card commit check when packaged metadata has the placeholder commit; API log privacy test no longer asserts bare substrings that can match ISO timestamps.
 
 ## [1.4.0] - 2026-10-01
 
