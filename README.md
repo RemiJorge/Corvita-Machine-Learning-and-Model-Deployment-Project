@@ -33,6 +33,12 @@ Test set: 600 records, 83 deaths. Metrics from `reports/metrics.json` (1000 boot
 
 Full API examples: `docs/api.md`. Review demo script: `docs/demo.md`.
 
+## Data and results walkthrough
+
+[notebooks/analysis.ipynb](notebooks/analysis.ipynb) is a read-only tour of cohort statistics, missing-data patterns, test metrics, and committed figures under `reports/`. It does not retrain models or recompute features. Most cells need only `reports/`; histogram cells need processed tables from `make data`. Re-execute locally with `make notebook` (requires dev dependencies from `make setup`).
+
+Public demo API (when deployed): `curl -s "https://icu-api-demo-ir2das47na-nn.a.run.app/health"`.
+
 ## How it works
 
 ```text
@@ -158,6 +164,7 @@ infra/           Terraform for GCP
 models/1.0.1/    served pipeline and metadata (1.0.0 in image for rollback)
 reports/         metrics, tuning, figures, data quality, subgroups
 scripts/         send_requests.py, pull_cloud_logs.sh
+notebooks/       analysis.ipynb (data and results walkthrough)
 splits/          train, val, test record IDs
 src/icu/         ingest through API, monitor, and PSI helpers
 tests/           pytest suite

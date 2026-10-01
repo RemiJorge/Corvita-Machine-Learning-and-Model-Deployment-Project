@@ -5,6 +5,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Added
+
+- Analysis walkthrough notebook at `notebooks/analysis.ipynb` (`make notebook`, Jupyter dev deps only).
+
 ## [1.4.0] - 2026-10-01
 
 ### Added

@@ -22,6 +22,9 @@ dev = [
     "httpx",
     "ruff",
     "matplotlib",
+    "jupyter",
+    "nbconvert",
+    "ipykernel",
 ]
 
 [build-system]

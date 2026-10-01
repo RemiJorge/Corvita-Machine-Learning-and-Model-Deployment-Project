@@ -1,6 +1,6 @@
 VERSION := $(shell grep '^version' pyproject.toml | head -1 | cut -d '"' -f 2)
 
-.PHONY: help setup data features split train evaluate package reproduce lint test test-data check api docker-build docker-run simulate monitor tf-validate clean
+.PHONY: help setup data features split train evaluate package reproduce lint test test-data check api docker-build docker-run simulate monitor notebook tf-validate clean
 
 help: ## List targets with a one-line description
 	@grep -E '^[a-zA-Z0-9_-]+:.*##' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*## "}; {printf "  %-16s %s\n", $$1, $$2}'
@@ -75,6 +75,9 @@ simulate: ## Replay test-set requests against a running API
 monitor: ## Run monitoring check on logs/requests.jsonl
 	@mkdir -p logs
 	uv run python -m icu.monitor
+
+notebook: ## Execute notebooks/analysis.ipynb in place (needs reports/; parquet cells need make data)
+	uv run jupyter nbconvert --execute --to notebook --inplace notebooks/analysis.ipynb
 
 tf-validate: ## Terraform fmt check, init without backend, validate
 	terraform -chdir=infra fmt -check -recursive
