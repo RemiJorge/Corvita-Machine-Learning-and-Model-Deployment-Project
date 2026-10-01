@@ -75,7 +75,7 @@ make monitor
 ## Rolling back
 
 - Cloud Run: route 100 % traffic to the previous revision (see `docs/infrastructure.md` when available).
-- Local or Docker: restart with the previous `MODEL_VERSION` or image tag. Predictions in logs stay tied to the model version that served them; logs are not rewritten.
+- Local or Docker: restart with the previous `MODEL_VERSION` (for example `docker run ... -e MODEL_VERSION=1.0.0` when both versions are in the image) or an older image tag. Predictions in logs stay tied to the model version that served them; logs are not rewritten.
 
 ## Incidents
 

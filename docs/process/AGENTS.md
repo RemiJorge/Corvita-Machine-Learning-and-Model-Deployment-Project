@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Operating manual for every coding agent working in this repository. Read it in full before touching any file. The documents in `specs/` are the source of truth. If a request, a spec and the code disagree, stop and ask the human owner.
+Operating manual for every coding agent working in this repository. Read it in full before touching any file. The documents in `docs/process/specs/` (paths below as `specs/` relative to `docs/process/`) are the source of truth. If a request, a spec and the code disagree, stop and ask the human owner.
 
 ## Context
 
@@ -49,7 +49,7 @@ Operating manual for every coding agent working in this repository. Read it in f
 4. Implement in small commits following Conventional Commits (see conventions spec).
 5. Add tests. Run `make check` (lint, format check, tests).
 6. Update docs, `CHANGELOG.md` under `[Unreleased]`, then move the entry to the new version and bump `pyproject.toml`.
-7. Write the handoff report below and stop. When the human owner closes a feature, archive the report under `specs/handoffs/Fx-short-name.md` (local specs tree; not required in the public git repo).
+7. Write the handoff report below and stop.
 8. After human approval: the human merges into `main` and creates the tag `vX.Y.Z`. Agents do not run merge, commit, push, or tag unless the human explicitly asks for a commit in that session.
 
 ## Handoff report template

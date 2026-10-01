@@ -9,7 +9,7 @@ The API must serve a fixed scikit-learn pipeline with metadata (threshold, featu
 
 ## Decision
 
-The production Docker image copies `models/<serving.model_version>/` (pipeline and `metadata.json`) at build time. An image tag therefore identifies application code plus the served model. Rollback is redeploying a previous image tag or setting `MODEL_VERSION` to another folder that was built into the same image.
+The production Docker image copies each packaged model folder needed at runtime (currently `models/1.0.0` and `models/1.0.1`, pipeline and `metadata.json`) at build time. An image tag therefore identifies application code plus the models baked in. Rollback is redeploying a previous image tag on Cloud Run, or setting `MODEL_VERSION` to another folder that was copied into the same image (for example `1.0.0` vs `1.0.1` locally).
 
 ## Alternatives considered
 

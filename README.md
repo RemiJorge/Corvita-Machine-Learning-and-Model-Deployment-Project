@@ -44,7 +44,7 @@ PhysioNet raw files (set A)
   -> stratified split (train / val / test IDs in Git)
   -> train (grid search on validation only)
   -> evaluate (single test score, bootstrap CIs)
-  -> package (models/1.0.0/ in Git)
+  -> package (models/1.0.1/ served in Docker; 1.0.0 kept for rollback)
   -> FastAPI /predict (same cleaning + features)
   -> JSON request logs (no patient values) + monitor check
 ```
@@ -72,7 +72,7 @@ Last value at the latest minute uses the highest `row_order` on ties (ADR 004).
 
 ## Reproducibility
 
-Pinned: `uv.lock`, `config/config.yaml` (`seed: 42`, `cutoff_minutes: 1440`), committed split CSVs under `splits/`, `reports/metrics.json`, and `models/1.0.0/` with `metadata.json` (manifest digest `3d13119ba577e31b155e066f68ada7dfafd09bfd0a8aaf147c9ca56970a17062`, split file hashes, hyperparameters). `make reproduce` compares split files byte-for-byte and metrics with tolerance `1e-6`.
+Pinned: `uv.lock`, `config/config.yaml` (`seed: 42`, `cutoff_minutes: 1440`, `serving.model_version: 1.0.1`), committed split CSVs under `splits/`, `reports/metrics.json`, and `models/1.0.1/metadata.json` for the served artifact (manifest digest `3d13119ba577e31b155e066f68ada7dfafd09bfd0a8aaf147c9ca56970a17062`, split file hashes, hyperparameters). `make reproduce` compares split files byte-for-byte and metrics with tolerance `1e-6`.
 
 Expected differences across machines: floating-point noise below tolerance, Docker build layer timestamps, and `git_dirty` in metadata if the tree changed after packaging.
 
@@ -88,13 +88,13 @@ curl -s -X POST localhost:8080/predict \
   -d @examples/valid.json
 ```
 
-Errors: 422 validation, 500 on unexpected server failure. Health: `GET /health` → `{"status":"ok","model_version":"1.0.0"}`.
+Errors: 422 validation, 500 on unexpected server failure. Health: `GET /health` → `{"status":"ok","model_version":"1.0.1"}` (default; override with `MODEL_VERSION` when multiple folders are in the image).
 
 ## Monitoring and operations
 
 Each request logs one JSON line to stdout (and to `REQUEST_LOG_PATH` when set): latency, status, missing vitals, flags, not `record_id`, ages, or measurement values. See [docs/operations.md](docs/operations.md) for grep checks.
 
-`make monitor` reads `logs/requests.jsonl`, compares rates to training reference baselines in model metadata, prints a JSON summary, exits 0 for `ok` or `not_enough_data`, exits 1 on alert. Drift: rising missing-vital or alert rates without ingestion changes warrants investigation; PSI on features is optional (roadmap O2). Retraining is manual: new training run, shadow period, guardrails, canary, promote revision; rollback by routing traffic to the previous Cloud Run revision ([docs/operations.md](docs/operations.md)).
+`make monitor` reads `logs/requests.jsonl`, compares rates to training reference baselines in model metadata, and runs PSI on logged feature bins (no raw values in logs). Exits 0 for `ok` or `not_enough_data`, exits 1 on alert. Simulate bias with `scripts/send_requests.py --shift Temp=+1.5`. Retraining is manual: new training run, shadow period, guardrails, canary, promote revision; rollback by Cloud Run revision or `MODEL_VERSION` in Docker ([docs/operations.md](docs/operations.md)).
 
 ## Cloud setup
 
@@ -109,7 +109,14 @@ Each request logs one JSON line to stdout (and to `REQUEST_LOG_PATH` when set): 
 
 Access: callers need `roles/run.invoker`; demo may use `allUsers` (ADR 011). Secrets: none in app; `terraform.tfvars` and `backend.hcl` stay local. State: remote GCS, not in Git. Retention: artifact lifecycle keeps five noncurrent versions; logs 30 days in Cloud Logging. Cost: about $0 for review traffic ([infra/README.md](infra/README.md)). Removal: `terraform destroy`. Recovery: revision rollback, GCS object versions, redeploy in another region ([docs/infrastructure.md](docs/infrastructure.md)).
 
-**Untested without a GCP project:** `terraform apply`, IAM in production, org policy on public invoker, cold-start timing.
+**Untested without a GCP project:** `terraform apply` was not run for this submission (see [infra/README.md](infra/README.md)); IAM in production, org policy on public invoker, and cold-start timing are also untested.
+
+## Optional extras (beyond F0 to F14)
+
+- **O0:** RespRate missingness vs mechanical ventilation (`reports/data_quality.json`, [docs/data.md](docs/data.md)).
+- **O3:** Test-set metrics by ICU type ([reports/subgroups.json](reports/subgroups.json), model card table).
+- **O1:** Cloud Run Terraform, `pull_cloud_logs.sh`, and deployment runbook: **prepared, not executed** on GCP.
+- **O2:** PSI drift on binned features (`make monitor`, `--shift` on `send_requests.py`).
 
 ## Data and citation
 
@@ -126,6 +133,7 @@ Dataset page: [PhysioNet Challenge 2012](https://physionet.org/content/challenge
 - Test set has 83 events; confidence intervals are wide.
 - No external validation; calibration may not transfer.
 - Served threshold is a configurable operating point, not a clinical standard.
+- PSI on `resp_rate_count` is mostly uninformative (many zero counts in one bin). `icu.psi` imports constants from `icu.train` (acceptable for the exercise; would decouple in production).
 
 ## Path to real-world use
 
@@ -133,24 +141,24 @@ External and prospective validation on contemporary cohorts; evaluation without 
 
 ## Project management
 
-Human time is logged in [TIME_LOG.md](TIME_LOG.md). Required features F0 to F14 closed at `v1.0.0`. History: [CHANGELOG.md](CHANGELOG.md). Design choices: [docs/decisions/](docs/decisions/).
+Human time is logged in [docs/process/TIME_LOG.md](docs/process/TIME_LOG.md). Required features F0 to F14 closed at `v1.0.0`; post-review fixes and optionals through package **1.4.0** ([CHANGELOG.md](CHANGELOG.md)). Specs and agent rules: [docs/process/](docs/process/). Design choices: [docs/decisions/](docs/decisions/).
 
 ## Use of AI tools
 
-Summary by area in [AI_USAGE.md](AI_USAGE.md). Coding agents implemented features from the specs; the author reviewed code, ran commands, and verified reports. Every part was reviewed, run, and understood by the author before submission.
+Summary by area in [docs/process/AI_USAGE.md](docs/process/AI_USAGE.md). Coding agents implemented features from the specs; the author reviewed code, ran commands, and verified reports. Every part was reviewed, run, and understood by the author before submission.
 
 ## Repository layout
 
 ```text
 config/          config.yaml
 data/            manifest.json (raw/processed not in Git)
-docs/            data, modeling, model card, API, ops, infra, demo, ADRs
+docs/            data, modeling, model card, API, ops, infra, demo, ADRs, process/
 examples/        JSON bodies for curl
 infra/           Terraform for GCP
-models/1.0.0/    served pipeline and metadata
-reports/         metrics, tuning, figures, data quality
-scripts/         send_requests.py for load and outage simulation
+models/1.0.1/    served pipeline and metadata (1.0.0 in image for rollback)
+reports/         metrics, tuning, figures, data quality, subgroups
+scripts/         send_requests.py, pull_cloud_logs.sh
 splits/          train, val, test record IDs
-src/icu/         ingest through API and monitor
+src/icu/         ingest through API, monitor, and PSI helpers
 tests/           pytest suite
 ```

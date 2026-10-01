@@ -21,6 +21,8 @@ logs/
 infra/.terraform/
 infra/terraform.tfvars
 infra/backend.hcl
+infra/tfplan
+infra/tfplan.*
 *.tfstate
 *.tfstate.*
 

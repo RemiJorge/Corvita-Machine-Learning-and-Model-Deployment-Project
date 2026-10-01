@@ -40,7 +40,7 @@ Each HTTP request emits one JSON line to stdout (and to `REQUEST_LOG_PATH` when 
 
 ```json
 {"ts": "2026-10-03T10:15:02.114Z", "request_id": "…", "path": "/predict", "status_code": 200,
- "latency_ms": 7.4, "model_version": "1.0.0", "data_quality_status": "partial",
+ "latency_ms": 7.4, "model_version": "1.0.1", "data_quality_status": "partial",
  "missing_vitals": ["RespRate"], "n_measurements_used": 41, "n_excluded_after_cutoff": 3,
  "n_out_of_range": 0, "risk_flag": false, "error": null}
 ```
@@ -69,7 +69,7 @@ curl -s -X POST localhost:8080/predict \
   -d @examples/valid.json | python3 -m json.tool
 ```
 
-Response (2026-09-30, model 1.0.0):
+Response (2026-09-30, model 1.0.1):
 
 ```json
 {
@@ -79,7 +79,7 @@ Response (2026-09-30, model 1.0.0):
     "risk_flag": false,
     "threshold": 0.13113858330514636,
     "model": {
-        "version": "1.0.0",
+        "version": "1.0.1",
         "type": "logistic_regression",
         "git_commit": "7d004194cb7a5e6efc433fd877596e1a6d77b3a0",
         "training_data_sha256": "62e4ef454575a8341342869172429646bb73c25fa46ec19b291612caf0c41eb7",
@@ -112,7 +112,7 @@ curl -s -X POST localhost:8080/predict \
     "risk_flag": false,
     "threshold": 0.13113858330514636,
     "model": {
-        "version": "1.0.0",
+        "version": "1.0.1",
         "type": "logistic_regression",
         "git_commit": "7d004194cb7a5e6efc433fd877596e1a6d77b3a0",
         "training_data_sha256": "62e4ef454575a8341342869172429646bb73c25fa46ec19b291612caf0c41eb7",
@@ -150,7 +150,7 @@ curl -s -X POST localhost:8080/predict \
     "risk_flag": null,
     "threshold": 0.13113858330514636,
     "model": {
-        "version": "1.0.0",
+        "version": "1.0.1",
         "type": "logistic_regression",
         "git_commit": "7d004194cb7a5e6efc433fd877596e1a6d77b3a0",
         "training_data_sha256": "62e4ef454575a8341342869172429646bb73c25fa46ec19b291612caf0c41eb7",
@@ -190,5 +190,5 @@ curl -s localhost:8080/health
 ```
 
 ```json
-{"status":"ok","model_version":"1.0.0"}
+{"status":"ok","model_version":"1.0.1"}
 ```

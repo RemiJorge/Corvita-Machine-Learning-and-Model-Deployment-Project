@@ -47,7 +47,7 @@ Model metadata later stores the SHA-256 of `manifest.json` itself as `training_d
 
 ## Later stages (F2 onward)
 
-Parsing, cleaning, the 24 h cutoff, and table builds are documented here as they land in F2 and F3. Authoritative rules: `specs/03_DATA_SPEC.md`.
+Parsing, cleaning, the 24 h cutoff, and table builds are documented here as they land in F2 and F3. Authoritative rules: `docs/process/specs/03_DATA_SPEC.md`.
 
 ### Parsing (F2)
 
@@ -142,4 +142,4 @@ Set A only includes patients who stayed in the ICU at least 48 hours. A predicti
 
 `make data` runs ingest, then parse, then quality, then tables.
 
-See `specs/03_DATA_SPEC.md` for the authoritative rules.
+See `docs/process/specs/03_DATA_SPEC.md` for the authoritative rules.

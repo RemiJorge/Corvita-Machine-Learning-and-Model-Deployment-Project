@@ -91,4 +91,4 @@ Scale to zero, `max_instance_count = 1`, and optional budget notifications. A bu
 
 ## Operations cross-links
 
-Monitoring queries and rollback steps: [operations.md](operations.md). After a Cloud Run deploy, optional `bash scripts/pull_cloud_logs.sh` then `uv run python -m icu.monitor --log logs/cloud_requests.jsonl` (see O1 runbook in `specs/10_FIXES_AND_OPTIONALS.md`). Commands, init/validate output, and untested steps: [infra/README.md](../infra/README.md).
+Monitoring queries and rollback steps: [operations.md](operations.md). After a Cloud Run deploy, optional `bash scripts/pull_cloud_logs.sh` then `uv run python -m icu.monitor --log logs/cloud_requests.jsonl` (see O1 runbook in `docs/process/specs/10_FIXES_AND_OPTIONALS.md`). Commands, init/validate output, and untested steps: [infra/README.md](../infra/README.md).

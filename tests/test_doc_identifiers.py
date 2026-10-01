@@ -1,4 +1,4 @@
-"""Committed docs must quote the same identifiers as models/1.0.0/metadata.json."""
+"""Committed docs must quote the same identifiers as models/1.0.1/metadata.json (served)."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 def test_readme_and_model_card_match_metadata_digest() -> None:
     metadata = json.loads(
-        (REPO_ROOT / "models" / "1.0.0" / "metadata.json").read_text(encoding="utf-8")
+        (REPO_ROOT / "models" / "1.0.1" / "metadata.json").read_text(encoding="utf-8")
     )
     digest = str(metadata["training_data_sha256"])
     commit = str(metadata["git_commit"])

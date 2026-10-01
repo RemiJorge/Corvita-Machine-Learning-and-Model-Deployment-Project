@@ -4,7 +4,7 @@
 
 `icu.features.compute_features(admission_df, vitals_df)` builds the model input matrix. It does not read files and does not use the outcome label. Training (`python -m icu.features`) and the prediction API (F9) call the same function on tables that already passed the 24 h cutoff and cleaning rules in `icu.tables` and `icu.quality`.
 
-Column names and order are fixed by `FEATURE_COLUMNS` (19 columns). See `specs/04_MODELING_SPEC.md` section 1 for definitions.
+Column names and order are fixed by `FEATURE_COLUMNS` (19 columns). See `docs/process/specs/04_MODELING_SPEC.md` section 1 for definitions.
 
 ### ICU type one-hot
 

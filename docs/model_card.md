@@ -1,9 +1,9 @@
 # Model card: ICU in-hospital mortality, first 24 hours
 
-- Model version: 1.0.0
+- Model version: 1.0.1 (served; same `pipeline.joblib` as 1.0.0 with PSI reference metadata)
 - Served model: logistic regression, `C=0.01`
 - Trained on: PhysioNet Challenge 2012 set A, manifest SHA-256 `3d13119ba577e31b155e066f68ada7dfafd09bfd0a8aaf147c9ca56970a17062` (hash of `data/manifest.json` at package time), training split 2800 records
-- Code: git `f729e02f85f6e0114ce809f4aeb94cca5d09e73f` (from `models/1.0.0/metadata.json`), package 1.0.0
+- Code: git `f729e02f85f6e0114ce809f4aeb94cca5d09e73f` (from `models/1.0.1/metadata.json`), package 1.4.0
 
 ## Intended use
 
@@ -66,6 +66,7 @@ The API abstains when no vital has a valid value in the window (`data_quality.st
 - No external validation; calibration may not transfer.
 - Class imbalance handled by thresholding, not class weights (ADR 005).
 - Split is by record ID, not patient (dataset has no patient linkage).
+- PSI drift monitoring is weak on `resp_rate_count` because most values sit in one bin (many zero counts). `icu.psi` imports training constants from `icu.train`; a production codebase would move shared feature lists to `icu.features` or config.
 
 ## Ethical and safety notes
 
