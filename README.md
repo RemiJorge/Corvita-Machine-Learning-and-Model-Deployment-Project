@@ -8,11 +8,13 @@ This repository predicts in-hospital death during an ICU stay from the first 24 
 
 Test set: 600 records, 83 deaths. Metrics from `reports/metrics.json` (1000 bootstrap resamples, 95 % percentile intervals). Baselines: PR-AUC and precision at test prevalence (0.138); AUROC 0.5; Brier of a constant prediction equal to the training death rate (0.139): 0.119.
 
-| Model | PR-AUC [95 % CI] | AUROC [95 % CI] | Sensitivity [CI] | Specificity [CI] | Brier [CI] |
-|---|---|---|---|---|---|
+
+| Model                        | PR-AUC [95 % CI]     | AUROC [95 % CI]      | Sensitivity [CI]     | Specificity [CI]     | Brier [CI]           |
+| ---------------------------- | -------------------- | -------------------- | -------------------- | -------------------- | -------------------- |
 | Logistic regression (served) | 0.303 [0.225, 0.399] | 0.741 [0.684, 0.792] | 0.783 [0.687, 0.859] | 0.578 [0.538, 0.620] | 0.110 [0.090, 0.129] |
-| Hist. gradient boosting | 0.350 [0.267, 0.457] | 0.776 [0.724, 0.827] | 0.855 [0.779, 0.927] | 0.578 [0.535, 0.621] | 0.105 [0.090, 0.123] |
-| Baseline | 0.138 | 0.500 | n/a | n/a | 0.119 |
+| Hist. gradient boosting      | 0.350 [0.267, 0.457] | 0.776 [0.724, 0.827] | 0.855 [0.779, 0.927] | 0.578 [0.535, 0.621] | 0.105 [0.090, 0.123] |
+| Baseline                     | 0.138                | 0.500                | n/a                  | n/a                  | 0.119                |
+
 
 **Served model:** logistic regression (`C=0.01`). It is served because validation PR-AUC was higher (0.381 versus 0.371 for HGB). Secondary advantages are size, speed, and readable coefficients. On the test set HGB scores higher on every metric, but the paired bootstrap interval for the PR-AUC difference contains zero. See `docs/decisions/007-served-model-choice.md`.
 
@@ -37,8 +39,6 @@ Full API examples: `docs/api.md`. Review demo script: `docs/demo.md`.
 
 [notebooks/analysis.ipynb](notebooks/analysis.ipynb) is a read-only tour of cohort statistics, missing-data patterns, test metrics, and committed figures under `reports/`. It does not retrain models or recompute features. Most cells need only `reports/`; histogram cells need processed tables from `make data`. Re-execute locally with `make notebook` (requires dev dependencies from `make setup`).
 
-Deployed demo API (optional O1; tear down after the review with `terraform destroy`): `curl -s "https://icu-api-demo-ir2das47na-nn.a.run.app/health"`. OpenAPI: `/docs` on the same host.
-
 ## How it works
 
 ```text
@@ -61,18 +61,22 @@ PhysioNet raw files (set A)
 - **Operations:** monitoring, release, rollback ([docs/operations.md](docs/operations.md)).
 - **Cloud:** Terraform on GCP ([docs/infrastructure.md](docs/infrastructure.md)).
 
+
+
 ## Input fields
 
 Measurements after minute 1440 are dropped. Outcome fields (`SAPS-I`, `SOFA`, `Length_of_stay`, `Survival`, `In-hospital_death`) are never model inputs.
 
-| Field | Source | Unit / values | Cleaning | Features produced |
-|---|---|---|---|---|
-| Age | `00:00` descriptor | years | Outside [15, 120] → missing | `age` |
-| Gender | `00:00` descriptor | 0 female, 1 male | `-1` or invalid → missing | `gender_male`, `gender_missing` |
-| ICUType | `00:00` descriptor | 1 to 4 | Outside [1, 4] → missing | `icu_type_1`, `icu_type_2`, `icu_type_3`, `icu_type_4` |
-| HR | time series | bpm | `-1` → missing; outside [20, 300] → missing | `hr_count`, `hr_mean`, `hr_last`, `hr_missing` |
-| RespRate | time series | breaths/min | `-1` → missing; outside [1, 80] → missing | `resp_rate_*` |
-| Temp | time series | °C | `-1` → missing; outside [25, 45] → missing | `temp_*` |
+
+| Field    | Source             | Unit / values    | Cleaning                                    | Features produced                                      |
+| -------- | ------------------ | ---------------- | ------------------------------------------- | ------------------------------------------------------ |
+| Age      | `00:00` descriptor | years            | Outside [15, 120] → missing                 | `age`                                                  |
+| Gender   | `00:00` descriptor | 0 female, 1 male | `-1` or invalid → missing                   | `gender_male`, `gender_missing`                        |
+| ICUType  | `00:00` descriptor | 1 to 4           | Outside [1, 4] → missing                    | `icu_type_1`, `icu_type_2`, `icu_type_3`, `icu_type_4` |
+| HR       | time series        | bpm              | `-1` → missing; outside [20, 300] → missing | `hr_count`, `hr_mean`, `hr_last`, `hr_missing`         |
+| RespRate | time series        | breaths/min      | `-1` → missing; outside [1, 80] → missing   | `resp_rate_*`                                          |
+| Temp     | time series        | °C               | `-1` → missing; outside [25, 45] → missing  | `temp_*`                                               |
+
 
 Last value at the latest minute uses the highest `row_order` on ties (ADR 004).
 
@@ -104,14 +108,16 @@ Each request logs one JSON line to stdout (and to `REQUEST_LOG_PATH` when set): 
 
 ## Cloud setup
 
-| Component | Role |
-|---|---|
-| Cloud Run `icu-api-<env>` | HTTPS API, scale to zero, model in image |
-| Artifact Registry `icu-api` | Immutable Docker tags |
-| GCS artifacts bucket | Dataset snapshots, models, reports (versioned) |
-| Runtime service account | No GCP roles (least privilege) |
-| Deployer SA | Push images, deploy Run |
-| Optional budget | Alert only, does not stop spend |
+
+| Component                   | Role                                           |
+| --------------------------- | ---------------------------------------------- |
+| Cloud Run `icu-api-<env>`   | HTTPS API, scale to zero, model in image       |
+| Artifact Registry `icu-api` | Immutable Docker tags                          |
+| GCS artifacts bucket        | Dataset snapshots, models, reports (versioned) |
+| Runtime service account     | No GCP roles (least privilege)                 |
+| Deployer SA                 | Push images, deploy Run                        |
+| Optional budget             | Alert only, does not stop spend                |
+
 
 Access: callers need `roles/run.invoker`; demo may use `allUsers` (ADR 011). Secrets: none in app; `terraform.tfvars` and `backend.hcl` stay local. State: remote GCS, not in Git. Retention: artifact lifecycle keeps five noncurrent versions; logs 30 days in Cloud Logging. Cost: about $0 for review traffic ([infra/README.md](infra/README.md)). Removal: `terraform destroy`. Recovery: revision rollback, GCS object versions, redeploy in another region ([docs/infrastructure.md](docs/infrastructure.md)).
 
@@ -123,6 +129,8 @@ Access: callers need `roles/run.invoker`; demo may use `allUsers` (ADR 011). Sec
 - **O3:** Test-set metrics by ICU type ([reports/subgroups.json](reports/subgroups.json), model card table).
 - **O1:** Cloud Run deployed with Terraform; `pull_cloud_logs.sh` runbook in [infra/README.md](infra/README.md).
 - **O2:** PSI drift on binned features (`make monitor`, `--shift` on `send_requests.py`).
+
+
 
 ## Data and citation
 
@@ -140,6 +148,8 @@ Dataset page: [PhysioNet Challenge 2012](https://physionet.org/content/challenge
 - No external validation; calibration may not transfer.
 - Served threshold is a configurable operating point, not a clinical standard.
 - PSI on `resp_rate_count` is mostly uninformative (many zero counts in one bin). `icu.psi` imports constants from `icu.train` (acceptable for the exercise; would decouple in production).
+
+
 
 ## Path to real-world use
 
@@ -169,3 +179,4 @@ splits/          train, val, test record IDs
 src/icu/         ingest through API, monitor, and PSI helpers
 tests/           pytest suite
 ```
+
