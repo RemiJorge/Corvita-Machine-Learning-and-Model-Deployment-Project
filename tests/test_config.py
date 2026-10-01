@@ -48,6 +48,8 @@ def test_load_config_missing_nested_path_key(tmp_path: Path) -> None:
             "window_size": 200,
             "max_partial_rate_increase": 0.15,
             "max_insufficient_rate": 0.05,
+            "psi_alert": 0.25,
+            "psi_min_requests": 200,
         },
     }
     config_path = tmp_path / "config.yaml"

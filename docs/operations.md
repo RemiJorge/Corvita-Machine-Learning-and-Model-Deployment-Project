@@ -6,6 +6,8 @@ Procedures for monitoring, retraining, release, and rollback. The API keeps serv
 
 Structured logs contain request metadata (latency, data-quality status, missing vitals, risk flag) and never patient identifiers or measurements. They do not include `record_id`, age, gender, ICU type, measurement values, or predicted probability.
 
+For drift monitoring, each successful `/predict` log may include `feature_bins`: integer indices into decile bins learned on the training set (plus a missing bin). Bins summarize where a value fell relative to training, without storing the value itself, so logs stay free of reconstructible vitals or age.
+
 To verify a local log file after traffic:
 
 ```bash
@@ -22,8 +24,9 @@ Cloud Run sends stdout to Cloud Logging; set `REQUEST_LOG_PATH` only when you ne
 
 1. Run `make monitor` daily on the latest request log (default `logs/requests.jsonl` from config).
 2. Exit code `0` with `status: ok` or `not_enough_data` means no alert. Exit code `1` with `status: alert` means at least one rate exceeded training baselines or configured caps.
-3. Watch missing rates per vital (`HR`, `RespRate`, `Temp`), `partial_rate`, `insufficient_rate`, `error_rate`, and latency p95. Compare `risk_flag` rate with validation alert load when inputs are stable; a jump in alerts with stable missing rates may indicate population shift, while rising missing rates often point to sensors or ingestion.
-4. When labels arrive, compare PR-AUC, calibration, and Brier on recent labelled records against the model card.
+3. Watch missing rates per vital (`HR`, `RespRate`, `Temp`), `partial_rate`, `insufficient_rate`, `error_rate`, latency p95, and PSI per continuous feature when the window has at least `monitoring.psi_min_requests` successful predicts (default 200). Compare `risk_flag` rate with validation alert load when inputs are stable; a jump in alerts with stable missing rates may indicate population shift, while rising missing rates often point to sensors or ingestion.
+4. PSI thresholds are conventions from practice (often 0.1 for investigation and 0.25 for a strong alert), not formal statistical tests. This project alerts when any feature PSI exceeds `monitoring.psi_alert` (default 0.25).
+5. When labels arrive, compare PR-AUC, calibration, and Brier on recent labelled records against the model card.
 
 ## Monitoring check
 
@@ -31,7 +34,7 @@ Cloud Run sends stdout to Cloud Logging; set `REQUEST_LOG_PATH` only when you ne
 make monitor
 ```
 
-Reads the log path from `config/config.yaml` (`paths.request_log`) unless you pass `--log`. Baselines come from `training_reference` in the served model `metadata.json`. The window uses the most recent successful `POST /predict` responses (up to `monitoring.window_size`). Fewer than 30 successful requests in that window yields `not_enough_data` and exit code 0.
+Reads the log path from `config/config.yaml` (`paths.request_log`) unless you pass `--log`. Baselines come from `training_reference` in the served model `metadata.json`. The window uses the most recent successful `POST /predict` responses (up to `monitoring.window_size`). Fewer than 30 successful requests in that window yields `not_enough_data` and exit code 0. PSI is computed only when the window has at least `monitoring.psi_min_requests` requests (default 200); below that, rate checks still run but PSI is omitted (`psi_status: not_enough_data`).
 
 Simulate traffic against a running API:
 
@@ -45,6 +48,13 @@ Simulate a missing sensor:
 
 ```bash
 python scripts/send_requests.py --n 50 --drop RespRate
+make monitor
+```
+
+Simulate a biased temperature sensor (needs at least 200 logged predicts for PSI):
+
+```bash
+python scripts/send_requests.py --n 200 --shift Temp=+1.5
 make monitor
 ```
 

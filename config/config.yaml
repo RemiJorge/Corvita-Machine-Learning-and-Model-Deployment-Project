@@ -55,9 +55,11 @@ evaluation:
   calibration_bins: 10
 
 serving:
-  model_version: "1.0.0"
+  model_version: "1.0.1"
 
 monitoring:
   window_size: 200
   max_partial_rate_increase: 0.15
   max_insufficient_rate: 0.05
+  psi_alert: 0.25
+  psi_min_requests: 200

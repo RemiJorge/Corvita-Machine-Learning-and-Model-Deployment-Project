@@ -5,6 +5,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-01
+
+### Added
+
+- O2: `training_reference.psi_bins` (decile edges and training proportions per continuous feature) in model metadata; served model folder `models/1.0.1/` (same `pipeline.joblib`, metadata bump).
+- O2: API request logs store `feature_bins` (integer bin indices only, no raw feature values).
+- O2: PSI per feature in `icu.monitor` with `monitoring.psi_alert` (default 0.25) and `monitoring.psi_min_requests` (default 200); `icu.psi` helpers.
+- O2: `scripts/send_requests.py --shift` (for example `Temp=+1.5`) to simulate sensor bias.
+
+### Changed
+
+- O2: `config.yaml` `serving.model_version` is `1.0.1`.
+- O2: `docs/operations.md` documents PSI workflow, privacy of bin logging, and PSI threshold conventions.
+
 ## [1.3.0] - 2026-10-01
 
 ### Added

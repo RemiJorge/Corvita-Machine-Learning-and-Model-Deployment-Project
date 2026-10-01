@@ -22,22 +22,45 @@ def minute_to_time(minute: int) -> str:
     return f"{minute // 60:02d}:{minute % 60:02d}"
 
 
+def parse_shift_arg(shift_arg: str) -> dict[str, float]:
+    """Parse ``Param=+delta`` entries (for example ``Temp=+1.5``)."""
+    shifts: dict[str, float] = {}
+    if not shift_arg.strip():
+        return shifts
+    for part in shift_arg.split(","):
+        piece = part.strip()
+        if not piece:
+            continue
+        if "=" not in piece:
+            msg = f"Invalid --shift entry: {piece}"
+            raise ValueError(msg)
+        name, delta_str = piece.split("=", 1)
+        name = name.strip()
+        shifts[name] = float(delta_str.strip())
+    return shifts
+
+
 def build_request_body(
     record_id: int,
     admission: pd.Series,
     vitals_row: pd.DataFrame,
     drop: set[str],
+    shifts: dict[str, float],
 ) -> dict[str, object]:
     """Build a POST /predict JSON body from processed tables."""
-    measurements = [
-        {
-            "time": minute_to_time(int(row["minute"])),
-            "parameter": row["parameter"],
-            "value": float(row["value"]),
-        }
-        for _, row in vitals_row.iterrows()
-        if row["parameter"] not in drop
-    ]
+    measurements = []
+    for _, row in vitals_row.iterrows():
+        parameter = str(row["parameter"])
+        if parameter in drop:
+            continue
+        value = float(row["value"]) + shifts.get(parameter, 0.0)
+        measurements.append(
+            {
+                "time": minute_to_time(int(row["minute"])),
+                "parameter": parameter,
+                "value": value,
+            }
+        )
     gender = admission["gender"]
     gender_val: int | None = None if pd.isna(gender) else int(gender)
     return {
@@ -88,8 +111,19 @@ def main() -> None:
         default=REPO_ROOT / "config" / "config.yaml",
         help="Path to config.yaml",
     )
+    parser.add_argument(
+        "--shift",
+        type=str,
+        default="",
+        help="Comma-separated vital shifts (Temp=+1.5) to simulate sensor bias",
+    )
     args = parser.parse_args()
     drop = {part.strip() for part in args.drop.split(",") if part.strip()}
+    try:
+        shifts = parse_shift_arg(args.shift)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        raise SystemExit(1) from exc
 
     config = load_config(args.config)
     processed = Path(config["paths"]["processed_dir"])
@@ -119,7 +153,7 @@ def main() -> None:
         if admit_rows.empty:
             continue
         vitals_row = vitals.loc[vitals["record_id"] == record_id]
-        body = build_request_body(record_id, admit_rows.iloc[0], vitals_row, drop)
+        body = build_request_body(record_id, admit_rows.iloc[0], vitals_row, drop, shifts)
         status = post_predict(args.base_url, body)
         print(f"record_id={record_id} status={status}")
         sent += 1

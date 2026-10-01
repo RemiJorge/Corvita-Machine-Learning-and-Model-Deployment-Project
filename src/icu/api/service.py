@@ -9,6 +9,7 @@ import pandas as pd
 from icu.api.schemas import DataQualityInfo, ModelInfo, PredictRequest, PredictResponse
 from icu.features import FEATURE_COLUMNS, compute_features
 from icu.parse import time_to_minutes
+from icu.psi import feature_bins_from_row
 from icu.quality import apply_physiological_bounds
 from icu.tables import apply_cutoff, build_vitals_table, count_cutoff_exclusions
 
@@ -109,7 +110,7 @@ def predict_from_request(
     pipeline: Any,
     metadata: dict[str, Any],
     request_id: str,
-) -> PredictResponse:
+) -> tuple[PredictResponse, dict[str, int]]:
     """Run cutoff, bounds, features, and prediction for one request.
 
     Args:
@@ -168,6 +169,11 @@ def predict_from_request(
     threshold = float(metadata["threshold"])
     warnings = build_warnings(status, missing_vitals, n_excluded_after_cutoff, n_out_of_range)
 
+    psi_bins = metadata.get("training_reference", {}).get("psi_bins")
+    feature_bins: dict[str, int] = (
+        feature_bins_from_row(row, psi_bins) if isinstance(psi_bins, dict) and psi_bins else {}
+    )
+
     probability: float | None
     risk_flag: bool | None
     if status == "insufficient":
@@ -179,7 +185,7 @@ def predict_from_request(
         probability = round(proba, 4)
         risk_flag = proba >= threshold
 
-    return PredictResponse(
+    response = PredictResponse(
         request_id=request_id,
         record_id=request.record_id,
         probability=probability,
@@ -195,3 +201,4 @@ def predict_from_request(
         ),
         warnings=warnings,
     )
+    return response, feature_bins

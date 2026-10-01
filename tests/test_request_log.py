@@ -18,6 +18,7 @@ def test_build_log_record_severity_info_for_success() -> None:
         n_excluded_after_cutoff=0,
         n_out_of_range=0,
         risk_flag=False,
+        feature_bins={"age": 3, "temp_mean": 5},
         error=None,
     )
     assert record["severity"] == "INFO"
@@ -36,6 +37,7 @@ def test_build_log_record_severity_error_for_5xx() -> None:
         n_excluded_after_cutoff=None,
         n_out_of_range=None,
         risk_flag=None,
+        feature_bins=None,
         error="internal_error",
     )
     assert record["severity"] == "ERROR"

@@ -52,6 +52,7 @@ def build_log_record(
     n_excluded_after_cutoff: int | None,
     n_out_of_range: int | None,
     risk_flag: bool | None,
+    feature_bins: dict[str, int] | None,
     error: str | None,
 ) -> dict[str, Any]:
     """Build a request log dict matching the API spec (section 7)."""
@@ -70,5 +71,6 @@ def build_log_record(
         "n_excluded_after_cutoff": n_excluded_after_cutoff,
         "n_out_of_range": n_out_of_range,
         "risk_flag": risk_flag,
+        "feature_bins": feature_bins if feature_bins is not None else {},
         "error": error,
     }

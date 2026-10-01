@@ -151,6 +151,7 @@ def create_app(
                 n_excluded_after_cutoff=log_fields.get("n_excluded_after_cutoff"),
                 n_out_of_range=log_fields.get("n_out_of_range"),
                 risk_flag=log_fields.get("risk_flag"),
+                feature_bins=log_fields.get("feature_bins"),
                 error=log_fields.get("error"),
             )
         else:
@@ -167,6 +168,7 @@ def create_app(
                 n_excluded_after_cutoff=None,
                 n_out_of_range=None,
                 risk_flag=None,
+                feature_bins=None,
                 error=error_type,
             )
         state.request_log.write_line(record)
@@ -181,7 +183,7 @@ def create_app(
     def predict(body: PredictRequest, request: Request) -> PredictResponse:
         request_id = str(request.state.request_id)
         state: AppState = app.state.icu
-        response = predict_from_request(
+        response, feature_bins = predict_from_request(
             body,
             state.config,
             state.pipeline,
@@ -197,6 +199,7 @@ def create_app(
             "n_excluded_after_cutoff": dq.n_excluded_after_cutoff,
             "n_out_of_range": dq.n_out_of_range,
             "risk_flag": response.risk_flag,
+            "feature_bins": feature_bins,
         }
         return response
 

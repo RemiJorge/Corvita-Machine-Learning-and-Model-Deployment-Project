@@ -149,13 +149,18 @@ def test_logs_contain_no_patient_values(tmp_path: Path, api_client: TestClient) 
     log_text = lines[-1]
     assert "424242" not in log_text
     assert "123.45" not in log_text
-    assert '"age"' not in log_text
+    assert "36.5" not in log_text
+    assert f'"age": {payload["age"]}' not in log_text
     assert '"probability"' not in log_text
     record = json.loads(log_text)
     assert record["path"] == "/predict"
     assert record["request_id"]
     assert record["severity"] == "INFO"
     assert record["data_quality_status"] in ("ok", "partial", "insufficient")
+    assert "feature_bins" in record
+    assert isinstance(record["feature_bins"], dict)
+    assert "77" not in log_text
+    assert "36.5" not in log_text
 
 
 def test_out_of_range_becomes_missing(api_client: TestClient) -> None:
@@ -183,7 +188,7 @@ def _minute_to_time(minute: int) -> str:
 def test_api_matches_offline_prediction() -> None:
     """API probability matches the packaged pipeline on a real test record."""
     config = load_config(REPO_ROOT / "config" / "config.yaml")
-    pipeline, metadata = load_model("1.0.0", config_path=REPO_ROOT / "config" / "config.yaml")
+    pipeline, metadata = load_model("1.0.1", config_path=REPO_ROOT / "config" / "config.yaml")
 
     test_ids = pd.read_csv(REPO_ROOT / "splits" / "test_ids.csv")["record_id"].astype(int)
     record_id = int(test_ids.iloc[0])
@@ -219,7 +224,9 @@ def test_api_matches_offline_prediction() -> None:
         icu_type=int(admit_row["icu_type"]),
         measurements=api_measurements,
     )
-    response = predict_from_request(request, config, pipeline, metadata, "offline-test")
+    response, _feature_bins = predict_from_request(
+        request, config, pipeline, metadata, "offline-test"
+    )
     features = compute_features(
         admission.loc[admission["record_id"] == record_id],
         vitals_row.reset_index(drop=True),

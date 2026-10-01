@@ -12,6 +12,7 @@ import numpy as np
 
 from icu.artifacts import load_model
 from icu.config import load_config
+from icu.psi import PSI_FEATURE_COLUMNS, compute_psi
 
 MIN_REQUESTS = 30
 VITALS = ("HR", "RespRate", "Temp")
@@ -105,10 +106,40 @@ def compute_metrics(window: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def compute_psi_metrics(
+    window: list[dict[str, Any]],
+    psi_bins: dict[str, dict[str, Any]],
+) -> dict[str, float]:
+    """PSI per monitored feature from logged bin indices."""
+    n_requests = len(window)
+    if n_requests == 0:
+        return {}
+
+    psi_values: dict[str, float] = {}
+    for feature in PSI_FEATURE_COLUMNS:
+        spec = psi_bins.get(feature)
+        if spec is None:
+            continue
+        n_bins = int(spec["n_bins"])
+        counts = [0] * n_bins
+        for record in window:
+            bins = record.get("feature_bins") or {}
+            if feature not in bins:
+                continue
+            bin_idx = int(bins[feature])
+            if 0 <= bin_idx < n_bins:
+                counts[bin_idx] += 1
+        expected = list(spec["proportions"])
+        actual = [c / n_requests for c in counts]
+        psi_values[feature] = compute_psi(expected, actual)
+    return psi_values
+
+
 def evaluate_alerts(
     metrics: dict[str, Any],
     training_reference: dict[str, Any],
     monitoring_config: dict[str, Any],
+    psi_values: dict[str, float] | None,
 ) -> list[str]:
     """Return human-readable alert messages when thresholds are exceeded."""
     alerts: list[str] = []
@@ -134,6 +165,13 @@ def evaluate_alerts(
                 f"missing_rate[{vital}] {observed:.4f} exceeds training "
                 f"{baseline:.4f} + {max_partial}"
             )
+
+    if psi_values is not None:
+        psi_alert = float(monitoring_config["psi_alert"])
+        for feature, value in sorted(psi_values.items()):
+            if value > psi_alert:
+                alerts.append(f"psi[{feature}] {value:.4f} exceeds {psi_alert}")
+
     return alerts
 
 
@@ -154,6 +192,9 @@ def run_monitor(
     """
     monitoring = config["monitoring"]
     window_size = int(monitoring["window_size"])
+    psi_min_requests = int(monitoring["psi_min_requests"])
+    psi_bins = training_reference.get("psi_bins") or {}
+
     records = read_log_lines(log_path)
     window = select_window(records, window_size)
     metrics = compute_metrics(window)
@@ -167,6 +208,7 @@ def run_monitor(
             "missing_rate": training_reference["missing_rate"],
         },
         "metrics": metrics,
+        "psi": {},
         "alerts": [],
         "status": "ok",
     }
@@ -175,7 +217,14 @@ def run_monitor(
         summary["status"] = "not_enough_data"
         return summary, 0
 
-    alerts = evaluate_alerts(metrics, training_reference, monitoring)
+    psi_values: dict[str, float] | None = None
+    if metrics["n_requests"] >= psi_min_requests and psi_bins:
+        psi_values = compute_psi_metrics(window, psi_bins)
+        summary["psi"] = psi_values
+    elif metrics["n_requests"] < psi_min_requests:
+        summary["psi_status"] = "not_enough_data"
+
+    alerts = evaluate_alerts(metrics, training_reference, monitoring, psi_values)
     summary["alerts"] = alerts
     if alerts:
         summary["status"] = "alert"

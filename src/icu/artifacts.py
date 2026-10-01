@@ -26,6 +26,7 @@ from icu.evaluate import (
 )
 from icu.features import FEATURE_COLUMNS
 from icu.ingest import sha256_file
+from icu.psi import compute_psi_bins
 from icu.split import TEST_IDS_CSV, TRAIN_IDS_CSV, VAL_IDS_CSV
 from icu.train import (
     CONTINUOUS_COLUMNS,
@@ -60,7 +61,7 @@ def compute_training_reference(x_train: pd.DataFrame) -> dict[str, Any]:
 
     Returns:
         Dictionary with ``missing_rate``, ``partial_rate``, ``insufficient_rate``,
-        and ``feature_quantiles``.
+        ``feature_quantiles``, and ``psi_bins``.
     """
     missing_flags = x_train[list(VITAL_MISSING_COLUMNS)].astype(int)
     n_rows = len(x_train)
@@ -97,6 +98,7 @@ def compute_training_reference(x_train: pd.DataFrame) -> dict[str, Any]:
         "partial_rate": partial_rate,
         "insufficient_rate": insufficient_rate,
         "feature_quantiles": quantiles,
+        "psi_bins": compute_psi_bins(x_train),
     }
 
 

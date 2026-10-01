@@ -67,6 +67,8 @@ monitoring:
   window_size: 10
   max_partial_rate_increase: 0.15
   max_insufficient_rate: 0.05
+  psi_alert: 0.25
+  psi_min_requests: 200
 """,
         encoding="utf-8",
     )
@@ -126,6 +128,8 @@ monitoring:
   window_size: 10
   max_partial_rate_increase: 0.15
   max_insufficient_rate: 0.05
+  psi_alert: 0.25
+  psi_min_requests: 200
 """,
         encoding="utf-8",
     )
@@ -172,6 +176,8 @@ def test_training_reference_rates() -> None:
     assert ref["partial_rate"] == pytest.approx(2 / 3)
     assert ref["insufficient_rate"] == pytest.approx(1 / 3)
     assert "age" in ref["feature_quantiles"]
+    assert "age" in ref["psi_bins"]
+    assert len(ref["psi_bins"]["age"]["proportions"]) == 11
 
 
 def test_compare_metrics_identical() -> None:

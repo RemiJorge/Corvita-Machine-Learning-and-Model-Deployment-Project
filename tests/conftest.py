@@ -15,6 +15,7 @@ from fastapi.testclient import TestClient
 
 from icu.api.app import create_app
 from icu.features import FEATURE_COLUMNS
+from icu.psi import compute_psi_bins
 from icu.train import build_logreg_pipeline
 
 _TEST_CONFIG = """
@@ -67,6 +68,8 @@ monitoring:
   window_size: 10
   max_partial_rate_increase: 0.15
   max_insufficient_rate: 0.05
+  psi_alert: 0.25
+  psi_min_requests: 200
 """
 
 
@@ -100,6 +103,12 @@ def api_client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Test
         "training_data_sha256": "0" * 64,
         "threshold": 0.5,
         "library_versions": {"scikit-learn": sklearn.__version__},
+        "training_reference": {
+            "missing_rate": {"HR": 0.0, "RespRate": 0.0, "Temp": 0.0},
+            "partial_rate": 0.0,
+            "insufficient_rate": 0.0,
+            "psi_bins": compute_psi_bins(x_df),
+        },
     }
     joblib.dump(pipeline, models_root / "pipeline.joblib")
     (models_root / "metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
