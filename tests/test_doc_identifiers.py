@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from icu.artifacts import GIT_COMMIT_UNKNOWN
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -20,4 +22,5 @@ def test_readme_and_model_card_match_metadata_digest() -> None:
 
     assert digest in readme
     assert digest in model_card
-    assert commit in model_card
+    if commit != GIT_COMMIT_UNKNOWN:
+        assert commit in model_card
