@@ -24,7 +24,7 @@ RUN groupadd --system app && useradd --system --gid app app
 COPY --from=builder /app/.venv /app/.venv
 COPY src ./src
 COPY config ./config
-COPY models/1.0.0 ./models/1.0.0
+COPY models/1.0.1 ./models/1.0.1
 
 USER app
 
