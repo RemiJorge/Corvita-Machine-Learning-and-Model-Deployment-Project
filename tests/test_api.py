@@ -154,6 +154,7 @@ def test_logs_contain_no_patient_values(tmp_path: Path, api_client: TestClient) 
     record = json.loads(log_text)
     assert record["path"] == "/predict"
     assert record["request_id"]
+    assert record["severity"] == "INFO"
     assert record["data_quality_status"] in ("ok", "partial", "insufficient")
 
 

@@ -55,7 +55,9 @@ def build_log_record(
     error: str | None,
 ) -> dict[str, Any]:
     """Build a request log dict matching the API spec (section 7)."""
+    severity = "ERROR" if status_code >= 500 else "INFO"
     return {
+        "severity": severity,
         "ts": utc_timestamp(),
         "request_id": request_id,
         "path": path,

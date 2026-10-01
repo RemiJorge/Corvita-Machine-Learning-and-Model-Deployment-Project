@@ -62,6 +62,21 @@ The state file lists every resource address and may contain sensitive values. It
 
 Copy `terraform.tfvars.example` to `terraform.tfvars` (git-ignored). Required: `project_id`, `image`. No real project IDs belong in Git.
 
+`image` ends with the Docker tag you pushed (for example `icu-api:1.3.0`). `model_version` is the `MODEL_VERSION` env var and must match a `models/<version>/` folder inside the image (the Dockerfile currently copies only `1.0.0`). A mismatch makes the container exit before `/health` passes the startup probe.
+
+## Deployment log
+
+Fill this section after a real deploy (O1). Redact project IDs and account details in the plan summary.
+
+| Field | Value |
+| --- | --- |
+| Date | YYYY-MM-DD |
+| Image tag | e.g. `icu-api:1.3.0` |
+| `terraform plan` summary (redacted) | e.g. N to add, 0 to change, 0 to destroy |
+| Service URL | `https://...` (from `terraform output -raw service_url`) |
+| Rollback performed | yes/no; revision names if yes |
+| Destroy date | TBD until `terraform destroy` |
+
 ## Deployment (optional)
 
 Two-step apply: the image must exist in Artifact Registry before Cloud Run can start.
@@ -163,4 +178,4 @@ Expected total for the review period: **$0**, at most a few cents.
 - Billing budget resource (needs `billing_account_id` and permission)
 - Organisation policies blocking `allUsers`
 - Cold start duration
-- Cloud Logging parsing of API JSON log lines
+- Cloud Logging parsing of API JSON log lines (after deploy: `bash scripts/pull_cloud_logs.sh`, requires `jq`)

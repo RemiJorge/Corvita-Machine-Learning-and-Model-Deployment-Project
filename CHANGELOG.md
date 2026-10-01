@@ -5,6 +5,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-01
+
+### Added
+
+- O1: `severity` (`INFO` or `ERROR` for 5xx) on each API request JSON log line for Cloud Logging classification.
+- O1: `scripts/pull_cloud_logs.sh` to export `/predict` `jsonPayload` lines to `logs/cloud_requests.jsonl` (requires `jq`).
+
+### Changed
+
+- O1: Google provider `user_project_override` and `billing_project` in `infra/providers.tf` for billing budget API with user credentials.
+- O1: `infra/README.md` deployment log table template for post-deploy notes.
+
 ## [1.2.0] - 2026-10-01
 
 ### Added

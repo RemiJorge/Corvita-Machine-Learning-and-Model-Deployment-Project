@@ -1,2 +1,2 @@
-bucket = "<project-id>-tfstate"
+bucket = "corvita-icu-demo-tfstate"
 prefix = "corvita-icu/demo"

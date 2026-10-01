@@ -23,7 +23,7 @@ Reviewers / hospital integration
 Cloud Run service icu-api-<env>  (0--1 instances, 512 MiB, port 8080)
         |  runtime SA: no GCP roles; model in image (ADR 009)
         v
-stdout JSON request logs --> Cloud Logging (_Default retention 30 days)
+stdout JSON request logs (includes `severity` for Cloud Logging) --> Cloud Logging (_Default retention 30 days)
 
 CI / deployer SA --> Artifact Registry (icu-api) --> image pull (platform)
 Data team IAM members --> GCS artifacts bucket (snapshots, models, reports)
@@ -91,4 +91,4 @@ Scale to zero, `max_instance_count = 1`, and optional budget notifications. A bu
 
 ## Operations cross-links
 
-Monitoring queries and rollback steps: [operations.md](operations.md). Commands, init/validate output, and untested steps: [infra/README.md](../infra/README.md).
+Monitoring queries and rollback steps: [operations.md](operations.md). After a Cloud Run deploy, optional `bash scripts/pull_cloud_logs.sh` then `uv run python -m icu.monitor --log logs/cloud_requests.jsonl` (see O1 runbook in `specs/10_FIXES_AND_OPTIONALS.md`). Commands, init/validate output, and untested steps: [infra/README.md](../infra/README.md).
